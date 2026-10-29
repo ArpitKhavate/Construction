@@ -21,14 +21,14 @@ const MENUS = [
   { label: "Sustainability", body: "Floodplain, creek, and pipeline reads stay attached to the spot." },
 ];
 
-// ?hero=a (default) our copy, ?hero=b Arpit's copy and nav, ?hero=c our copy with Arpit's nav.
+// ?hero=b (default) Arpit's copy and nav, ?hero=a our copy, ?hero=c our copy with Arpit's nav.
 type Hero = "a" | "b" | "c";
 
 export default function Landing() {
   const params = useSearchParams();
   const jump = Boolean(params.get("prompt") || params.get("spot"));
   const raw = params.get("hero");
-  const hero: Hero = raw === "b" || raw === "c" ? raw : "a";
+  const hero: Hero = raw === "a" || raw === "c" ? raw : "b";
 
   const [view, setView] = useState<SceneView>("street");
   const [mapShown, setMapShown] = useState(false);

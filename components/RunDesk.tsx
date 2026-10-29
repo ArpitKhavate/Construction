@@ -1,9 +1,12 @@
 "use client";
 
 import { PermitSheets } from "@/components/PermitSheets";
+import dynamic from "next/dynamic";
 import type { RunRecord } from "@/lib/types";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+
+const Crew = dynamic(() => import("@/components/Crew").then((mod) => mod.Crew), { ssr: false });
 
 const BAND = { strong: "Strong match", possible: "Possible", weak: "Weak match" };
 
@@ -66,7 +69,7 @@ export function RunDesk({ id }: { id: string }) {
       count += 1;
       setShown(count);
       if (count >= total) window.clearInterval(timer);
-    }, 700);
+    }, 1400);
     return () => window.clearInterval(timer);
   }, [replayKey]);
 
@@ -183,6 +186,7 @@ export function RunDesk({ id }: { id: string }) {
             {run.revision.note}
           </div>
         ) : null}
+        <Crew run={run} shown={shown} />
         <div className="run-grid">
           <section className="card" aria-live="polite">
             <p className="kicker">Five agents</p>

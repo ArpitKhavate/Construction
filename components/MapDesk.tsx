@@ -1,5 +1,6 @@
 "use client";
 
+import { CrewOverlay } from "@/components/Crew";
 import { CITIES } from "@/lib/anchors";
 import type { Constraints, Spot } from "@/lib/types";
 import maplibregl, { type Map as MlMap, type Marker } from "maplibre-gl";
@@ -312,6 +313,15 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
       >
         <div ref={mapNode} className="map" />
       </div>
+      {researching ? (
+        <CrewOverlay
+          place={
+            mode === "address"
+              ? address.split(",")[0]
+              : (spots.find((spot) => spot.id === selected)?.address ?? "this spot")
+          }
+        />
+      ) : null}
       <aside
         className="panel"
         style={story ? { opacity: story.panel, pointerEvents: story.revealed ? "auto" : "none" } : undefined}

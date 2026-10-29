@@ -57,6 +57,16 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
   const [mode, setMode] = useState<"idea" | "address">("idea");
   const [address, setAddress] = useState("3105 Cherrywood Rd, Austin, TX 78722");
   const [addressIdea, setAddressIdea] = useState("A backyard ADU (small second home) to rent out");
+  const [mapStyle, setMapStyle] = useState<"map" | "satellite">("map");
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready) return;
+    const satellite = mapStyle === "satellite";
+    map.setLayoutProperty("voyager", "visibility", satellite ? "none" : "visible");
+    map.setLayoutProperty("satellite", "visibility", satellite ? "visible" : "none");
+    map.setLayoutProperty("labels", "visibility", satellite ? "visible" : "none");
+  }, [mapStyle, ready]);
 
   useEffect(() => {
     if (!mapNode.current || mapRef.current) return;
@@ -72,6 +82,14 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
       style: {
         version: 8,
         sources: {
+          voyager: {
+            type: "raster",
+            tiles: ["a", "b", "c", "d"].map(
+              (s) => `https://${s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png`,
+            ),
+            tileSize: 256,
+            attribution: "© OpenStreetMap contributors © CARTO",
+          },
           satellite: {
             type: "raster",
             tiles: [
@@ -81,18 +99,20 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
             attribution:
               "Imagery © Esri, Maxar, Earthstar Geographics, and the GIS User Community",
           },
-          places: {
+          labels: {
             type: "raster",
-            tiles: [
-              "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
-            ],
+            tiles: ["a", "b", "c", "d"].map(
+              (s) =>
+                `https://${s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}@2x.png`,
+            ),
             tileSize: 256,
-            attribution: "Labels © Esri",
+            attribution: "© OpenStreetMap contributors © CARTO",
           },
         },
         layers: [
-          { id: "satellite", type: "raster", source: "satellite" },
-          { id: "places", type: "raster", source: "places" },
+          { id: "voyager", type: "raster", source: "voyager" },
+          { id: "satellite", type: "raster", source: "satellite", layout: { visibility: "none" } },
+          { id: "labels", type: "raster", source: "labels", layout: { visibility: "none" } },
         ],
       },
     });
@@ -312,6 +332,19 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
         }
       >
         <div ref={mapNode} className="map" />
+        <div className="map-style-toggle" role="group" aria-label="Map style">
+          {(["map", "satellite"] as const).map((value) => (
+            <button
+              key={value}
+              type="button"
+              className={mapStyle === value ? "on" : undefined}
+              aria-pressed={mapStyle === value}
+              onClick={() => setMapStyle(value)}
+            >
+              {value === "map" ? "Map" : "Satellite"}
+            </button>
+          ))}
+        </div>
       </div>
       {researching ? (
         <CrewOverlay

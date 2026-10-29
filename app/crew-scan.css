@@ -1,0 +1,127 @@
+/* ---------- Crew: pickable cards and the loading scan list ---------- */
+
+/* Cards as buttons (results page): reset the button, keep the frosted card look. */
+button.crew-card {
+  display: block;
+  width: 100%;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 400ms ease, box-shadow 220ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+button.crew-card .crew-hop,
+button.crew-card .crew-body { display: block; }
+
+button.crew-card:hover { transform: translateY(-3px); }
+button.crew-card:active { transform: translateY(-1px); }
+button.crew-card:focus { outline: none; }
+button.crew-card:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 4px;
+}
+
+/* Selected: graphite ring, lifted, brighter glass. */
+button.crew-card.cs-selected {
+  transform: translateY(-5px);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.86) 0%, rgb(255 255 255 / 0.5) 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 0 0 2px var(--graphite),
+    0 20px 40px -18px rgb(52 52 47 / 0.55);
+}
+button.crew-card.cs-selected:hover { transform: translateY(-6px); }
+
+/* Labels: clickable by mouse, the picked name stands out, a caret points at the panel below. */
+.cs-pickable .crew-labels { padding-bottom: 14px; }
+.cs-pickable .crew-labels > div {
+  position: relative;
+  cursor: pointer;
+  transition: opacity 220ms ease;
+}
+.cs-pickable .crew-labels > div:not(.cs-picked) b { color: var(--graphite-soft); }
+.cs-pickable .crew-labels > div.cs-picked b { color: var(--graphite); }
+.cs-pickable .crew-labels > div.cs-picked b::after {
+  content: "";
+  display: block;
+  width: 28px;
+  height: 3px;
+  margin: 3px auto 0;
+  border-radius: 2px;
+  background: var(--red);
+}
+.cs-pickable .crew-labels > div.cs-picked::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -16px;
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 9px solid var(--graphite);
+  transform: translateX(-50%);
+  animation: cs-caret 260ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes cs-caret {
+  from { opacity: 0; transform: translate(-50%, -6px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* Loading sheet: the layers each agent is reading, each with a looping spinner. */
+.cs-scan {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+  font-size: 12.5px;
+  line-height: 1.25;
+  color: var(--muted);
+}
+.cs-scan li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  opacity: 0;
+  animation:
+    cs-in 360ms ease calc(var(--j) * 120ms + 300ms) forwards,
+    cs-read 4.2s ease-in-out calc(var(--j) * 0.55s + 900ms) infinite;
+}
+.cs-spin {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.6px solid rgb(52 52 47 / 0.18);
+  border-top-color: var(--red);
+  animation: cs-spin 0.9s linear calc(var(--j) * -0.17s) infinite;
+}
+@keyframes cs-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes cs-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 0.8; transform: none; }
+}
+/* a reading highlight that drifts down each list */
+@keyframes cs-read {
+  0%, 100% { opacity: 0.8; color: var(--muted); }
+  12% { opacity: 1; color: var(--graphite); }
+  28% { opacity: 0.8; color: var(--muted); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button.crew-card,
+  button.crew-card:hover,
+  button.crew-card.cs-selected,
+  button.crew-card.cs-selected:hover { transition: none; transform: none; }
+  .cs-pickable .crew-labels > div.cs-picked::after { animation: none; }
+  .cs-scan li { animation: none; opacity: 0.85; }
+  .cs-spin { animation: none; border-color: rgb(52 52 47 / 0.35); }
+}

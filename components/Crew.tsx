@@ -4,7 +4,8 @@ import type { AgentId, RunRecord } from "@/lib/types";
 
 // The five research agents drawn as a crew of glossy characters, one per agent card.
 // The art is generated renders in public/crew; the motion is CSS (app/theme.css), driven by
-// each agent's state: queued, working, done (a hop) or gap (a shrug).
+// each agent's state: queued, working, done (a hop) or gap (a shrug). With onSelect the cards
+// become buttons that pick which agent the panel below shows (styles in app/crew-scan.css).
 
 export type CrewState = "queued" | "working" | "done" | "gap";
 type Member = { name: string; role: string; art: string };
@@ -41,9 +42,38 @@ function finding(run: RunRecord, id: AgentId): { found: boolean; line: string } 
   }
 }
 
+// The real layers each agent reads, listed under it on the loading sheet.
+const SCANS: Record<AgentId, string[]> = {
+  codes: ["Zoning map", "Base district", "Historic districts"],
+  hazards: ["FEMA flood zones", "City floodplain", "Pipelines", "Wildfire", "Airport"],
+  permits: ["Building permits nearby"],
+  development: ["Your request", "Filing path rules"],
+  environmental: ["Creek buffers", "Floodplains"],
+};
+
 type RowMember = Member & { id: AgentId; state: CrewState; found: boolean };
 
-export function Crew({ run, shown }: { run: RunRecord; shown: number }) {
+function statusLine(member: RowMember & { line: string }): string {
+  return member.state === "queued"
+    ? "Waiting"
+    : member.state === "working"
+      ? "Reading the city layers…"
+      : member.state === "gap"
+        ? "Some layers did not answer"
+        : member.line;
+}
+
+export function Crew({
+  run,
+  shown,
+  selected,
+  onSelect,
+}: {
+  run: RunRecord;
+  shown: number;
+  selected?: AgentId;
+  onSelect?: (id: AgentId) => void;
+}) {
   const members = run.steps.map((step, index) => {
     const state: CrewState =
       index < shown ? (step.status === "gap" ? "gap" : "done") : index === shown ? "working" : "queued";
@@ -51,26 +81,30 @@ export function Crew({ run, shown }: { run: RunRecord; shown: number }) {
   });
 
   return (
-    <section className="crew" aria-label="The research crew">
+    <section className={`crew${onSelect ? " cs-pickable" : ""}`} aria-label="The research crew">
       <div className="crew-row">
         {members.map((member, index) => (
-          <Card key={member.id} member={member} index={index} />
+          <Card
+            key={member.id}
+            member={member}
+            index={index}
+            picked={selected === member.id}
+            label={`${member.name}, ${statusLine(member)}`}
+            onSelect={onSelect}
+          />
         ))}
       </div>
       <div className="crew-row crew-labels">
         {members.map((member) => (
-          <div key={member.id}>
+          // mouse shortcut only; the card above is the keyboard target
+          <div
+            key={member.id}
+            className={selected === member.id ? "cs-picked" : undefined}
+            onClick={onSelect ? () => onSelect(member.id) : undefined}
+          >
             <b>{member.name}</b>
             <span>{member.role}</span>
-            <em aria-live="polite">
-              {member.state === "queued"
-                ? "Waiting"
-                : member.state === "working"
-                  ? "Reading the city layers…"
-                  : member.state === "gap"
-                    ? "Some layers did not answer"
-                    : member.line}
-            </em>
+            <em aria-live="polite">{statusLine(member)}</em>
           </div>
         ))}
       </div>
@@ -97,10 +131,18 @@ export function CrewOverlay({ place }: { place: string }) {
           ))}
         </div>
         <div className="crew-row crew-labels">
-          {members.map((member) => (
+          {members.map((member, index) => (
             <div key={member.id}>
               <b>{member.name}</b>
               <span>{member.role}</span>
+              <ul className="cs-scan" aria-label={`${member.name} is reading`}>
+                {SCANS[member.id].map((layer, j) => (
+                  <li key={layer} style={{ "--j": index * 2 + j } as React.CSSProperties}>
+                    <i className="cs-spin" aria-hidden="true" />
+                    {layer}
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>
@@ -109,13 +151,26 @@ export function CrewOverlay({ place }: { place: string }) {
   );
 }
 
-function Card({ member, index }: { member: RowMember; index: number }) {
+function Card({
+  member,
+  index,
+  picked = false,
+  label,
+  onSelect,
+}: {
+  member: RowMember;
+  index: number;
+  picked?: boolean;
+  label?: string;
+  onSelect?: (id: AgentId) => void;
+}) {
   const found = member.state === "done" && member.found;
-  return (
-    <div
-      className={`crew-card is-${member.state}${found ? " is-found" : ""}`}
-      style={{ "--i": index } as React.CSSProperties}
-    >
+  const className = `crew-card is-${member.state}${found ? " is-found" : ""}${picked ? " cs-selected" : ""}`;
+  const style = { "--i": index } as React.CSSProperties;
+  // a button may only hold phrasing content, so the art wrappers become spans there
+  const Box = onSelect ? "span" : "div";
+  const inner = (
+    <>
       {member.state === "done" ? (
         <span className="crew-badge ok" aria-hidden="true">
           <svg viewBox="0 0 16 16">
@@ -127,11 +182,11 @@ function Card({ member, index }: { member: RowMember; index: number }) {
       ) : null}
 
       {/* hop wraps breathe/type so the two animations never fight over one transform */}
-      <div className="crew-hop" aria-hidden="true">
-        <div className="crew-body">
+      <Box className="crew-hop" aria-hidden="true">
+        <Box className="crew-body">
           <img src={member.art} alt="" draggable={false} />
-        </div>
-      </div>
+        </Box>
+      </Box>
 
       {member.state === "working" ? (
         <span className="crew-typing" aria-hidden="true">
@@ -156,6 +211,26 @@ function Card({ member, index }: { member: RowMember; index: number }) {
       ) : null}
 
       {member.state === "gap" ? <span className="crew-sweat" aria-hidden="true" /> : null}
-    </div>
+    </>
+  );
+
+  if (!onSelect) {
+    return (
+      <div className={className} style={style}>
+        {inner}
+      </div>
+    );
+  }
+  return (
+    <button
+      type="button"
+      className={className}
+      style={style}
+      aria-label={label}
+      aria-pressed={picked}
+      onClick={() => onSelect(member.id)}
+    >
+      {inner}
+    </button>
   );
 }

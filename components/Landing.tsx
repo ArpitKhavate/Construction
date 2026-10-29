@@ -114,8 +114,11 @@ export default function Landing() {
               <br />
               reality.
             </h1>
+            <p className="land-lede">
+              Enter an Austin address. See the zoning, permits and hazards, each with its source, and who to call next.
+            </p>
             <button type="button" className="btn-red land-cta" onClick={enter} tabIndex={onMap ? -1 : 0}>
-              Learn more
+              Find your lot
               <Arrow />
             </button>
           </>

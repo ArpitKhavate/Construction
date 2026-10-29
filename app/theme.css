@@ -460,3 +460,35 @@ textarea { min-height: 84px; }
 @media (prefers-reduced-motion: reduce) {
   .crew-overlay, .crew-sheet { animation: none; }
 }
+
+/* ---------- Finish review fixes ---------- */
+
+/* 1: map pins never paint over the loading crew */
+.map-screen:has(.crew-overlay) .maplibregl-marker { visibility: hidden; }
+
+/* 2: results columns keep their own height instead of stretching to the checklist */
+.run-grid { align-items: start; }
+
+/* 3: per-agent times repeat the run total, so only the header shows the time */
+.agent header .muted { display: none; }
+
+/* 4: once spots come back, the panel shows the list instead of the examples */
+.panel:has(.spot-list li) .examples,
+.panel:has(.spot-list li) .fine { display: none; }
+
+/* 5: unselected bubbles are one line so they stop colliding */
+.bubble:not(.on) em,
+.bubble:not(.on) span { display: none; }
+.bubble:not(.on) { width: auto; max-width: 168px; padding: 7px 10px; }
+
+/* 6: lede under the shouted headline */
+.land-title.is-shout + .land-lede { margin-top: 20px; }
+
+/* 8: disabled buttons read as unavailable, not as a faded brand button */
+.btn:disabled {
+  opacity: 1;
+  background: var(--paper-2);
+  color: var(--muted);
+  box-shadow: none;
+}
+.btn.secondary:disabled { background: transparent; }

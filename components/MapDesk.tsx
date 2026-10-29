@@ -164,7 +164,7 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
     spots.forEach((spot) => bounds.extend([spot.lng, spot.lat]));
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     map.fitBounds(bounds, {
-      padding: { top: 80, bottom: 80, left: 470, right: 70 },
+      padding: { top: 130, bottom: 80, left: 480, right: 90 },
       maxZoom: 13,
       duration: reduce ? 0 : 800,
     });

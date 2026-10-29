@@ -2,11 +2,13 @@
 
 import { PermitSheets } from "@/components/PermitSheets";
 import dynamic from "next/dynamic";
-import type { RunRecord } from "@/lib/types";
+import { AGENT_MS } from "@/components/AgentPanel";
+import type { AgentId, RunRecord } from "@/lib/types";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 const Crew = dynamic(() => import("@/components/Crew").then((mod) => mod.Crew), { ssr: false });
+const AgentPanel = dynamic(() => import("@/components/AgentPanel").then((mod) => mod.AgentPanel), { ssr: false });
 
 // Leads the results with the answer: what the person asked for, and how the spot scored.
 function verdict(run: RunRecord) {
@@ -36,6 +38,7 @@ export function RunDesk({ id }: { id: string }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [shown, setShown] = useState(0);
+  const [picked, setPicked] = useState<AgentId | null>(null);
   const [feedback, setFeedback] = useState("");
   const [revising, setRevising] = useState(false);
   const [emailTo, setEmailTo] = useState("");
@@ -80,17 +83,19 @@ export function RunDesk({ id }: { id: string }) {
     if (!replayKey) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const total = replayKey.split("|").length;
+    setPicked(null);
     if (reduce) {
       setShown(total);
       return;
     }
     setShown(0);
-    let count = 0;
+    // Functional updates so a Skip (which jumps straight to the total) also ends the timer cleanly.
     const timer = window.setInterval(() => {
-      count += 1;
-      setShown(count);
-      if (count >= total) window.clearInterval(timer);
-    }, 1400);
+      setShown((count) => {
+        if (count + 1 >= total) window.clearInterval(timer);
+        return Math.min(count + 1, total);
+      });
+    }, AGENT_MS);
     return () => window.clearInterval(timer);
   }, [replayKey]);
 
@@ -181,7 +186,9 @@ export function RunDesk({ id }: { id: string }) {
   if (loading) return <div className="boot">Reading the research…</div>;
   if (!run) return <div className="boot">{error || "Research run not found."}</div>;
 
-  const ready = shown >= run.steps.length;
+  const total = run.steps.length;
+  const ready = shown >= total;
+  const selectedId: AgentId = picked ?? (shown < total ? run.steps[shown].id : run.steps[total - 1].id);
   const place = run.field.address ?? run.spot.name;
   const mapHref = `/?prompt=${encodeURIComponent(run.prompt)}&spot=${run.spot.id}`;
 
@@ -208,108 +215,81 @@ export function RunDesk({ id }: { id: string }) {
             {run.revision.note}
           </div>
         ) : null}
-        <Crew run={run} shown={shown} />
-        <div className="run-grid">
-          <section className="card" aria-live="polite">
-            <p className="kicker">Five agents</p>
-            <h2>What the city layers say</h2>
-            <p className="muted">They read zoning, flood, permits, and the published Austin process together.</p>
-            <div className="agents">
-              {run.steps.map((step, index) => {
-                const visible = index < shown;
-                return (
-                  <article key={step.id} className={visible ? `agent ${step.status}` : "agent wait"}>
-                    <header>
-                      <h3>{step.title}</h3>
-                      <span className="muted">{visible ? `${(step.durationMs / 1000).toFixed(1)}s` : "Waiting"}</span>
-                    </header>
-                    {visible ? (
-                      <>
-                        <p>{step.summary}</p>
-                        <ul>
-                          {step.bullets.map((bullet) => (
-                            <li key={bullet}>{bullet}</li>
-                          ))}
-                        </ul>
-                        <div className="sources">
-                          {step.sources.map((source) => (
-                            <a key={source.url} href={source.url} target="_blank" rel="noreferrer">
-                              {source.label}
-                            </a>
-                          ))}
-                        </div>
-                      </>
-                    ) : (
-                      <p className="muted">Queued</p>
-                    )}
-                  </article>
-                );
-              })}
+        {!ready ? (
+          <div className="rc-skip">
+            <button type="button" onClick={() => setShown(total)}>
+              Skip the replay
+            </button>
+          </div>
+        ) : null}
+        <Crew run={run} shown={shown} selected={selectedId} onSelect={setPicked} />
+        <AgentPanel run={run} shown={shown} selected={selectedId} />
+        <section className="card section rc-checklist">
+          <p className="kicker">Beginner checklist</p>
+          <h2>What to do next</h2>
+          {ready ? (
+            <div className="rc-steps">
+              {run.checklist.map((item, index) => (
+                <details key={item.n} className="rc-step" open={index === 0}>
+                  <summary>
+                    <span className="rc-step-num">{item.n}</span>
+                    <span className="rc-step-title">{item.title}</span>
+                    <svg className="rc-chevron" viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </summary>
+                  <div className="rc-step-body">
+                    <p>{item.detail}</p>
+                    <div className="rc-why">
+                      <span>Why this is on the list</span>
+                      {item.why}
+                    </div>
+                    {item.href ? (
+                      <a className="rc-chip" href={item.href} target="_blank" rel="noreferrer">
+                        {item.hrefLabel ?? "City source"}
+                      </a>
+                    ) : null}
+                  </div>
+                </details>
+              ))}
             </div>
-          </section>
-          <section className="card">
-            <p className="kicker">Beginner checklist</p>
-            <h2>What to do next</h2>
-            {ready ? (
-              <div className="checks">
-                {run.checklist.map((item) => (
-                  <article key={item.n} className="check">
-                    <span className="num">{item.n}</span>
-                    <div>
-                      <h3>{item.title}</h3>
-                      <p>{item.detail}</p>
-                      <div className="why">
-                        <span>Why this is on the list</span>
-                        {item.why}
-                      </div>
-                      {item.href ? (
-                        <p>
-                          <a href={item.href} target="_blank" rel="noreferrer">
-                            {item.hrefLabel ?? "City source"}
-                          </a>
-                        </p>
+          ) : (
+            <p className="muted">The checklist opens when all five agents have reported.</p>
+          )}
+          {ready && run.builders?.length ? (
+            <div className="rc-builders-wrap">
+              <p className="kicker">Local builders</p>
+              <div className="rc-builders">
+                {run.builders.map((builder) => (
+                  <article key={builder.name} className="rc-builder">
+                    <header>
+                      <h3>{builder.name}</h3>
+                      <span className={builder.rating != null ? "rc-rating" : "rc-rating none"}>
+                        {builder.rating != null ? `★ ${builder.rating.toFixed(1)}` : "No rating yet"}
+                      </span>
+                    </header>
+                    <p className="rc-reviews">
+                      {builder.reviews != null ? `${builder.reviews} Google reviews` : "No reviews yet"}
+                    </p>
+                    {builder.address ? <p className="rc-address">{builder.address}</p> : null}
+                    <div className="rc-links">
+                      {builder.phone ? <a href={`tel:${builder.phone.replace(/[^\d+]/g, "")}`}>{builder.phone}</a> : null}
+                      {builder.website ? (
+                        <a href={builder.website} target="_blank" rel="noreferrer">
+                          Website
+                        </a>
+                      ) : builder.mapsUrl ? (
+                        <a href={builder.mapsUrl} target="_blank" rel="noreferrer">
+                          Google Maps
+                        </a>
                       ) : null}
                     </div>
                   </article>
                 ))}
               </div>
-            ) : (
-              <p className="muted">The checklist opens when all five agents have reported.</p>
-            )}
-            {ready && run.builders?.length ? (
-              <div className="section">
-                <p className="kicker">Local builders</p>
-                <div className="checks">
-                  {run.builders.map((builder) => (
-                    <article key={builder.name} className="check">
-                      <span className="num">{builder.rating != null ? builder.rating.toFixed(1) : "–"}</span>
-                      <div>
-                        <h3>{builder.name}</h3>
-                        <p className="muted">
-                          {builder.reviews != null ? `${builder.reviews} Google reviews` : "No reviews yet"}
-                          {builder.address ? ` · ${builder.address}` : ""}
-                        </p>
-                        <p>
-                          {builder.phone ? <a href={`tel:${builder.phone.replace(/[^\d+]/g, "")}`}>{builder.phone}</a> : null}
-                          {builder.phone && (builder.website || builder.mapsUrl) ? " · " : null}
-                          {builder.website ? (
-                            <a href={builder.website} target="_blank" rel="noreferrer">
-                              Website
-                            </a>
-                          ) : builder.mapsUrl ? (
-                            <a href={builder.mapsUrl} target="_blank" rel="noreferrer">
-                              Google Maps
-                            </a>
-                          ) : null}
-                        </p>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-          </section>
-        </div>
+            </div>
+          ) : null}
+        </section>
 
         <PermitSheets run={run} ready={ready} onUpdated={apply} />
 

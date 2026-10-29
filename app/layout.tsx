@@ -5,6 +5,8 @@ import "./theme.css";
 import "./agent-panel.css";
 import "./crew-scan.css";
 import "./results-cleanup.css";
+import "./board.css";
+import "./builders.css";
 
 const archivo = Archivo({ variable: "--font-archivo", subsets: ["latin"], axes: ["wdth"] });
 

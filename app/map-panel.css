@@ -1,0 +1,486 @@
+/* Map page, neobrutalist: panel, spot list, pins, style toggle and map controls. Scoped to .map-screen only.
+   The panel keeps left 16px + width 420px so .crew-overlay (left: 452px) still starts right after it. */
+
+.map-screen {
+  --mp-ink: #191c22;
+  --mp-border: 3px solid #191c22;
+  --mp-border-thin: 2px solid #191c22;
+  --mp-shadow: 8px 8px 0 #191c22;
+  --mp-grey: #e9e9ec;
+  --mp-tint: #fde9dc;
+}
+
+/* ---------- Panel ---------- */
+
+.map-screen .panel {
+  top: 16px;
+  left: 16px;
+  bottom: 16px;
+  width: min(420px, calc(100vw - 32px));
+  gap: 12px;
+  padding: 22px 20px 20px;
+  background: white;
+  backdrop-filter: none;
+  border: var(--mp-border);
+  border-radius: 4px;
+  box-shadow: var(--mp-shadow);
+  color: var(--mp-ink);
+}
+
+.map-screen .brand { gap: 12px; margin-bottom: 6px; }
+.map-screen .brand-mark {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  background: var(--red);
+  color: white;
+  border: var(--mp-border);
+  border-radius: 3px;
+  box-shadow: 3px 3px 0 var(--mp-ink);
+  font-family: var(--serif);
+  font-variation-settings: "wdth" 72;
+  font-weight: 800;
+  font-size: 26px;
+  line-height: 1;
+}
+.map-screen .brand strong {
+  display: block;
+  font-family: var(--serif);
+  font-variation-settings: "wdth" 72;
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  color: var(--mp-ink);
+}
+.map-screen .brand small {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4a4d55;
+}
+
+/* ---------- Tabs ---------- */
+
+.map-screen .tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 0;
+  background: none;
+  border-radius: 0;
+  margin-bottom: 2px;
+}
+.map-screen .tab {
+  min-height: 40px;
+  border: var(--mp-border-thin);
+  border-radius: 3px;
+  background: white;
+  color: var(--mp-ink);
+  font-weight: 800;
+  font-size: 14px;
+  box-shadow: none;
+  cursor: pointer;
+}
+.map-screen .tab:hover { background: var(--mp-grey); }
+.map-screen .tab.on,
+.map-screen .tab.on:hover {
+  background: var(--mp-ink);
+  color: white;
+  box-shadow: none;
+}
+.map-screen .tab:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+
+/* ---------- Form ---------- */
+
+.map-screen .stack { gap: 10px; }
+.map-screen label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mp-ink);
+}
+.map-screen textarea,
+.map-screen input[type="text"] {
+  width: 100%;
+  background: white;
+  color: var(--mp-ink);
+  border: var(--mp-border-thin);
+  border-radius: 3px;
+  padding: 10px 12px;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: none;
+}
+.map-screen textarea { min-height: 76px; resize: vertical; }
+.map-screen textarea:focus-visible,
+.map-screen input[type="text"]:focus-visible {
+  outline: 3px solid var(--red);
+  outline-offset: 0;
+  border-color: var(--mp-ink);
+  box-shadow: none;
+}
+
+.map-screen .btn {
+  min-height: 48px;
+  padding: 0 18px;
+  background: var(--red);
+  color: white;
+  border: var(--mp-border);
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 var(--mp-ink);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 90ms ease, box-shadow 90ms ease, background-color 120ms ease;
+}
+.map-screen .btn:hover:not(:disabled) { background: var(--red-deep); }
+.map-screen .btn:active:not(:disabled) {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 var(--mp-ink);
+}
+.map-screen .btn:focus-visible { outline: 3px solid var(--mp-ink); outline-offset: 3px; }
+.map-screen .btn:disabled {
+  opacity: 1;
+  background: var(--mp-grey);
+  color: #6b6e75;
+  border-color: #9a9ca3;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* Example prompts: small bordered chips */
+.map-screen .examples { gap: 8px; margin-top: 2px; }
+.map-screen .examples button {
+  min-height: 0;
+  padding: 6px 10px;
+  background: white;
+  color: var(--mp-ink);
+  border: var(--mp-border-thin);
+  border-radius: 3px;
+  box-shadow: 2px 2px 0 var(--mp-ink);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 90ms ease, box-shadow 90ms ease, background-color 120ms ease;
+}
+.map-screen .examples button:hover { background: var(--mp-tint); border-color: var(--mp-ink); }
+.map-screen .examples button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--mp-ink);
+}
+
+.map-screen .status {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #5b5e66;
+}
+.map-screen .error {
+  margin: 0;
+  padding: 8px 10px;
+  background: var(--weak-bg);
+  color: var(--weak);
+  border: var(--mp-border-thin);
+  border-color: var(--weak);
+  border-radius: 3px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.map-screen .fine { margin: 0; font-size: 12px; line-height: 1.4; color: #5b5e66; }
+
+/* Constraint chips */
+.map-screen .chips { gap: 6px; margin: 0; }
+.map-screen .chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 0;
+  padding: 3px 8px;
+  background: var(--mp-grey);
+  color: var(--mp-ink);
+  border: var(--mp-border-thin);
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ---------- Spot list ---------- */
+
+.map-screen .spot-list {
+  list-style: none;
+  flex: 1;
+  min-height: 0;
+  margin: 0 -8px 0 0;
+  padding: 2px 10px 8px 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: auto;
+}
+.map-screen .spot-list li { flex: none; }
+.map-screen .spot-list:empty { display: none; }
+
+.map-screen .spot {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  padding: 10px 12px;
+  text-align: left;
+  background: white;
+  color: var(--mp-ink);
+  border: var(--mp-border-thin);
+  border-radius: 4px;
+  box-shadow: 3px 3px 0 var(--mp-ink);
+  cursor: pointer;
+  transition: transform 90ms ease, box-shadow 90ms ease, background-color 120ms ease;
+}
+.map-screen .spot:hover { background: #fafafb; border-color: var(--mp-ink); transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--mp-ink); }
+.map-screen .spot.on,
+.map-screen .spot.on:hover {
+  background: var(--mp-tint);
+  border: var(--mp-border);
+  padding: 9px 11px;
+  box-shadow: 5px 5px 0 var(--mp-ink);
+  transform: none;
+}
+.map-screen .spot:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+
+.map-screen .spot-num {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  background: white;
+  color: var(--mp-ink);
+  border: var(--mp-border-thin);
+  border-radius: 3px;
+  font-family: var(--serif);
+  font-variation-settings: "wdth" 72;
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1;
+}
+.map-screen .spot.on .spot-num { background: var(--red); color: white; }
+
+.map-screen .spot-main { display: grid; gap: 6px; min-width: 0; color: var(--mp-ink); }
+.map-screen .spot .spot-addr {
+  display: block;
+  font-family: var(--serif);
+  font-variation-settings: "wdth" 72;
+  font-weight: 800;
+  font-size: 19px;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  color: var(--mp-ink);
+  overflow-wrap: anywhere;
+}
+.map-screen .spot-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.map-screen .spot .tag-zone,
+.map-screen .spot .tag-band {
+  display: inline-flex;
+  align-items: center;
+  min-height: 0;
+  padding: 2px 7px;
+  border: var(--mp-border-thin);
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--mp-ink);
+}
+.map-screen .spot .tag-zone { background: var(--mp-grey); transform: rotate(-1deg); }
+.map-screen .spot .tag-band { transform: rotate(1.5deg); }
+.map-screen .spot .tag-band.strong { background: #8fe3a5; }
+.map-screen .spot .tag-band.possible { background: #ffd84d; }
+.map-screen .spot .tag-band.weak { background: #f6b3a0; }
+
+/* ---------- Map pins ---------- */
+
+.map-screen .pin {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  background: white;
+  color: var(--mp-ink);
+  border: var(--mp-border);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--mp-ink);
+  cursor: pointer;
+  transition: translate 120ms ease, box-shadow 120ms ease;
+}
+/* Pointer under the pin. MapLibre owns the element's transform, so motion uses `translate`. */
+.map-screen .pin::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -11px;
+  width: 0;
+  height: 0;
+  margin-left: -7px;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 9px solid var(--mp-ink);
+}
+.map-screen .pin-num {
+  font-family: var(--serif);
+  font-variation-settings: "wdth" 72;
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1;
+}
+.map-screen .pin:hover { translate: 0 -3px; box-shadow: 4px 6px 0 var(--mp-ink); }
+.map-screen .pin:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
+.map-screen .pin.on {
+  width: 40px;
+  height: 40px;
+  background: var(--red);
+  color: white;
+  box-shadow: 5px 5px 0 var(--mp-ink);
+}
+.map-screen .pin.on .pin-num { font-size: 21px; }
+.map-screen .pin-label {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: -8px;
+  padding: 5px 9px;
+  background: var(--mp-ink);
+  color: white;
+  border: 2px solid var(--mp-ink);
+  border-radius: 3px;
+  box-shadow: 3px 3px 0 var(--red);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: rotate(-2deg);
+  pointer-events: none;
+}
+
+/* City buttons */
+.map-screen .city-pin {
+  min-height: 34px;
+  padding: 0 12px;
+  background: white;
+  color: var(--mp-ink);
+  border: var(--mp-border-thin);
+  border-radius: 3px;
+  box-shadow: 3px 3px 0 var(--mp-ink);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: translate 120ms ease, box-shadow 120ms ease;
+}
+.map-screen .city-pin.live {
+  min-height: 42px;
+  padding: 0 16px;
+  background: var(--red);
+  color: white;
+  border: var(--mp-border);
+  box-shadow: 4px 4px 0 var(--mp-ink);
+  font-size: 16px;
+}
+.map-screen .city-pin:hover { translate: 0 -2px; box-shadow: 4px 5px 0 var(--mp-ink); }
+.map-screen .city-pin:focus-visible { outline: 3px solid var(--mp-ink); outline-offset: 3px; }
+
+/* ---------- Map style toggle + MapLibre controls ---------- */
+
+.map-screen .map-style-toggle {
+  position: absolute;
+  z-index: 3;
+  top: 84px;
+  right: 12px;
+  display: flex;
+  background: white;
+  border: var(--mp-border-thin);
+  border-radius: 3px;
+  box-shadow: 3px 3px 0 var(--mp-ink);
+  overflow: hidden;
+}
+.map-screen .map-style-toggle button {
+  min-height: 32px;
+  padding: 0 12px;
+  background: white;
+  color: var(--mp-ink);
+  border: 0;
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.map-screen .map-style-toggle button + button { border-left: var(--mp-border-thin); }
+.map-screen .map-style-toggle button:hover { background: var(--mp-grey); }
+.map-screen .map-style-toggle button.on,
+.map-screen .map-style-toggle button[aria-pressed="true"] { background: var(--mp-ink); color: white; }
+.map-screen .map-style-toggle button:focus-visible { outline: 3px solid var(--red); outline-offset: -3px; }
+
+.map-screen .maplibregl-ctrl-top-right .maplibregl-ctrl { margin: 12px 12px 0 0; }
+.map-screen .maplibregl-ctrl-group {
+  background: white;
+  border: var(--mp-border-thin);
+  border-radius: 3px;
+  box-shadow: 3px 3px 0 var(--mp-ink);
+  overflow: hidden;
+}
+.map-screen .maplibregl-ctrl-group:not(:empty) { box-shadow: 3px 3px 0 var(--mp-ink); }
+.map-screen .maplibregl-ctrl-group button {
+  width: 32px;
+  height: 32px;
+  border-radius: 0;
+}
+.map-screen .maplibregl-ctrl-group button + button { border-top: var(--mp-border-thin); }
+.map-screen .maplibregl-ctrl-group button:hover { background-color: var(--mp-grey); }
+.map-screen .maplibregl-ctrl-group button:focus:first-child,
+.map-screen .maplibregl-ctrl-group button:focus:last-child { border-radius: 0; }
+.map-screen .maplibregl-ctrl-group button:focus-visible { box-shadow: inset 0 0 0 3px var(--red); }
+
+.map-screen .maplibregl-ctrl-attrib,
+.map-screen .maplibregl-ctrl-attrib.maplibregl-compact {
+  background: rgb(255 255 255 / 0.85);
+  border-radius: 2px;
+  font-size: 10px;
+  color: #4a4d55;
+}
+.map-screen .maplibregl-ctrl-attrib a { color: inherit; }
+
+/* ---------- Small screens + motion ---------- */
+
+@media (max-width: 900px) {
+  .map-screen .panel { bottom: auto; max-height: calc(100% - 32px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-screen .btn,
+  .map-screen .examples button,
+  .map-screen .spot,
+  .map-screen .pin,
+  .map-screen .city-pin { transition: none; }
+  .map-screen .spot:hover,
+  .map-screen .pin:hover,
+  .map-screen .city-pin:hover { transform: none; translate: none; }
+  .map-screen .btn:active:not(:disabled),
+  .map-screen .examples button:active { transform: none; }
+}

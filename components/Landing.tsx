@@ -9,28 +9,16 @@ const MapDesk = dynamic(() => import("@/components/MapDesk"), {
   loading: () => <div className="boot">Loading the map…</div>,
 });
 
-const CARDS = [
-  {
-    kicker: "Before the lot",
-    title: "Start with Austin, still out of focus.",
-    body: "Scroll and the satellite sharpens. Other cities stay on the map. Live research is Austin.",
-  },
-  {
-    kicker: "Five agents",
-    title: "Zoning, flood, permits, site rules, and the creek.",
-    body: "Each answer comes from a city layer or a published Development Services page, with the reason beside it.",
-  },
-  {
-    kicker: "The application",
-    title: "One click writes the permit drafts.",
-    body: "After the checklist, the clerk fills the city forms from that research. You can read them and download the PDFs. Nothing is filed.",
-  },
-];
+const SiteCanvas = dynamic(() => import("@/components/SiteScene"), {
+  ssr: false,
+  loading: () => <div className="boot">Raising the site…</div>,
+});
 
-const SPANS = [
-  { enter: 0, hold: 0.18, out: 0.26 },
-  { enter: 0.3, hold: 0.46, out: 0.54 },
-  { enter: 0.58, hold: 0.72, out: 0.78 },
+const MENUS = [
+  { label: "About us", body: "Austin site research before the lot is under contract." },
+  { label: "Our work", body: "A live map, five city-data agents, and permit drafts you can download." },
+  { label: "Newsroom", body: "The checklist follows the current Austin Development Services pages." },
+  { label: "Sustainability", body: "Floodplain, creek, and pipeline reads stay attached to the spot." },
 ];
 
 export default function Landing() {
@@ -72,78 +60,138 @@ export default function Landing() {
     };
   }, [reduce, jump]);
 
-  if (reduce || jump) {
+  function enterMap() {
+    const root = rootRef.current;
+    if (!root) {
+      document.getElementById("desk")?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+    window.scrollTo({ top: root.offsetHeight, behavior: "smooth" });
+  }
+
+  if (jump) {
+    return (
+      <div className="flat-map">
+        <MapDesk />
+      </div>
+    );
+  }
+
+  if (reduce) {
     return (
       <>
-        {reduce ? (
-          <div className="flat-story">
-            {CARDS.map((card) => (
-              <section key={card.title} className="flat-card">
-                <p className="kicker">{card.kicker}</p>
-                <h1>{card.title}</h1>
-                <p>{card.body}</p>
-              </section>
-            ))}
-          </div>
-        ) : null}
-        <div className="flat-map">
+        <section className="hero-stage is-flat">
+          <SiteCanvas progress={0} />
+          <HeroChrome onEnter={enterMap} chrome={1} title={1} />
+        </section>
+        <div id="desk" className="flat-map">
           <MapDesk />
         </div>
       </>
     );
   }
 
-  const eased = Math.min(1, progress / 0.88);
-  const blur = 20 * (1 - eased);
-  const dim = 0.72 + 0.28 * eased;
-  const revealed = progress >= 0.9;
-  const panel = progress < 0.82 ? 0 : Math.min(1, (progress - 0.82) / 0.1);
-  const overlay = progress < 0.76 ? 1 : Math.max(0, 1 - (progress - 0.76) / 0.12);
-
-  function skip() {
-    const root = rootRef.current;
-    if (!root) return;
-    window.scrollTo({ top: root.offsetHeight, behavior: "smooth" });
-  }
+  const heroOpacity = progress < 0.46 ? 1 : Math.max(0, 1 - (progress - 0.46) / 0.24);
+  const chrome = progress < 0.08 ? 1 : Math.max(0, 1 - (progress - 0.08) / 0.16);
+  const title = progress < 0.14 ? 1 : Math.max(0, 1 - (progress - 0.14) / 0.18);
+  const rails = progress < 0.5 ? 1 : Math.max(0, 1 - (progress - 0.5) / 0.16);
+  const mapOpacity = progress < 0.4 ? 0 : Math.min(1, (progress - 0.4) / 0.26);
+  const revealed = progress >= 0.72;
+  const panel = progress < 0.56 ? 0 : Math.min(1, (progress - 0.56) / 0.16);
+  const titleScale = 1 + Math.min(progress, 0.28) * 1.4;
 
   return (
     <div className="story-root" ref={rootRef}>
       <div className="story-sticky">
-        <MapDesk story={{ blur, dim, revealed, progress, panel }} />
+        <div className="map-layer" style={{ opacity: mapOpacity }}>
+          <MapDesk story={{ blur: 0, dim: 1, revealed, progress, panel }} />
+        </div>
         <div
-          className="story-overlay"
+          className="hero-stage"
           style={{
-            opacity: overlay,
-            visibility: overlay < 0.05 ? "hidden" : "visible",
-            pointerEvents: overlay > 0.15 ? "auto" : "none",
+            opacity: heroOpacity,
+            visibility: heroOpacity < 0.04 ? "hidden" : "visible",
+            pointerEvents: heroOpacity > 0.2 ? "auto" : "none",
           }}
-          aria-hidden={overlay < 0.05}
+          aria-hidden={heroOpacity < 0.05}
         >
-          {CARDS.map((card, index) => {
-            const opacity = cardOpacity(progress, index);
-            return (
-              <article key={card.title} className="story-card" style={{ opacity }} aria-hidden={opacity < 0.4}>
-                <p className="kicker">{card.kicker}</p>
-                <h1>{card.title}</h1>
-                <p>{card.body}</p>
-              </article>
-            );
-          })}
-          <button type="button" className="btn secondary story-skip" onClick={skip}>
-            Skip to the questions
-          </button>
+          <SiteCanvas progress={progress} />
+          <HeroChrome onEnter={enterMap} chrome={chrome} title={title} titleScale={titleScale} rails={rails} />
         </div>
       </div>
     </div>
   );
 }
 
-function cardOpacity(progress: number, index: number) {
-  const span = SPANS[index];
-  if (index === 0 && progress <= span.hold) return 1;
-  if (progress <= span.enter) return 0;
-  if (progress < span.hold) return (progress - span.enter) / (span.hold - span.enter);
-  if (progress >= span.out) return 0;
-  if (progress <= span.hold) return 1;
-  return 1 - (progress - span.hold) / (span.out - span.hold);
+function HeroChrome({
+  onEnter,
+  chrome,
+  title,
+  titleScale = 1,
+  rails = 1,
+}: {
+  onEnter: () => void;
+  chrome: number;
+  title: number;
+  titleScale?: number;
+  rails?: number;
+}) {
+  return (
+    <>
+      <header className="hero-nav" style={{ opacity: chrome }}>
+        <a className="hero-logo" href="/" aria-label="Construction">
+          <HardHat />
+        </a>
+        <nav className="hero-links" aria-label="Primary">
+          {MENUS.map((item) => (
+            <details key={item.label} className="hero-menu">
+              <summary>{item.label}</summary>
+              <p>{item.body}</p>
+            </details>
+          ))}
+          <button type="button" className="hero-search" aria-label="Search the map" onClick={onEnter}>
+            <SearchIcon />
+          </button>
+        </nav>
+      </header>
+      <div className="hero-copy" style={{ opacity: title, transform: `scale(${titleScale})` }}>
+        <h1>
+          Building your
+          <br />
+          vision into
+          <br />
+          reality.
+        </h1>
+        <button type="button" className="hero-learn" onClick={onEnter}>
+          Learn more
+        </button>
+      </div>
+      <p className="scroll-rail left" style={{ opacity: rails }}>
+        Scroll down
+      </p>
+      <p className="scroll-rail right" style={{ opacity: rails }}>
+        Scroll down
+      </p>
+    </>
+  );
+}
+
+function HardHat() {
+  return (
+    <svg viewBox="0 0 48 48" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M8 30h32v4.5c0 2.5-2 4.5-4.5 4.5h-23C10 39 8 37 8 34.5V30zm4.2-2.2C13 20.2 17.6 14 24 14s11 6.2 11.8 13.8H12.2zM22 8h4v6h-4V8z"
+      />
+    </svg>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="10.5" cy="10.5" r="6.25" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="M15.2 15.2 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
 }

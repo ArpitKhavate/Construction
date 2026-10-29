@@ -37,37 +37,18 @@ export function PermitSheets({
   }
 
   return (
-    <section className="card section">
-      <p className="kicker">Permit packet</p>
-      <h2>The city applications</h2>
-      <p className="muted">
-        The form names are the city’s. One click fills them from this research. You can read every line and download the
-        PDFs. Nothing is submitted.
-      </p>
+    <div className="nb-permits">
+      <p className="nb-note">The city's own forms, filled from this research. Read every line, download the PDFs. Nothing is submitted.</p>
       {packet ? (
         <>
-          <p>{packet.clerkNote}</p>
-          <div className="permit-grid">
+          <p className="nb-clerk">{packet.clerkNote}</p>
+          <div className="nb-permit-grid">
             {packet.forms.map((form) => (
-              <article key={form.id} className="paper" id={`permit-${form.id}`}>
-                <span className="draft-banner">Draft — not submitted</span>
+              <article key={form.id} className="nb-paper" id={`permit-${form.id}`}>
+                <span className="nb-sticker nb-sticker-draft">Draft — not submitted</span>
                 <h3>{form.title}</h3>
-                <p>{form.intro}</p>
-                {form.sections.map((section) => (
-                  <div key={section.title}>
-                    <h4>{section.title}</h4>
-                    <dl>
-                      {section.fields.map((item) => (
-                        <div key={item.label} className={item.tone}>
-                          <dt>{item.label}</dt>
-                          <dd>{item.value}</dd>
-                        </div>
-                      ))}
-                    </dl>
-                  </div>
-                ))}
-                <div className="actions">
-                  <a className="btn" href={`/api/runs/${run.id}/permits/${form.id}`} download={form.fileName}>
+                <div className="nb-paper-actions">
+                  <a className="nb-btn nb-btn-ink" href={`/api/runs/${run.id}/permits/${form.id}`} download={form.fileName}>
                     Download PDF
                   </a>
                   <a href={`/api/runs/${run.id}/permits/${form.id}`} target="_blank" rel="noreferrer">
@@ -77,6 +58,23 @@ export function PermitSheets({
                     {form.sourceLabel}
                   </a>
                 </div>
+                <details className="nb-paper-lines">
+                  <summary>Read every line</summary>
+                  <p>{form.intro}</p>
+                  {form.sections.map((section) => (
+                    <div key={section.title}>
+                      <h4>{section.title}</h4>
+                      <dl>
+                        {section.fields.map((item) => (
+                          <div key={item.label} className={item.tone}>
+                            <dt>{item.label}</dt>
+                            <dd>{item.value}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </div>
+                  ))}
+                </details>
               </article>
             ))}
           </div>
@@ -86,11 +84,11 @@ export function PermitSheets({
         </>
       ) : (
         <>
-          <article className="paper">
-            <span className="draft-banner">Waiting for the clerk</span>
+          <article className="nb-paper nb-paper-wait">
+            <span className="nb-sticker nb-sticker-draft">Waiting for the clerk</span>
             <h3>{preview.title}</h3>
             <p>{preview.note}</p>
-            <ul className="permit-names">
+            <ul className="nb-permit-names">
               <li>{preview.title}</li>
               <li>Electrical permit request</li>
               <li>Plumbing permit request</li>
@@ -110,7 +108,7 @@ export function PermitSheets({
         </>
       )}
       {error ? <p className="error">{error}</p> : null}
-    </section>
+    </div>
   );
 }
 

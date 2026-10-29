@@ -40,9 +40,15 @@ First-time builders, such as someone adding a backyard home (ADU) or building a 
 
 ```bash
 npm install
-cp .env.example .env.local   # optional: add keys for email and calls
+cp .env.example .env.local   # then fill in the keys you have
 npm run dev                  # http://localhost:3000
 ```
+
+### Setup: keys
+
+1. Copy `.env.example` to `.env.local`. `.env.example` is the one shared template; `.env.local` is your own and is ignored by git.
+2. Fill in the values you need. Every key is optional, and each group in `.env.example` says what it unlocks and what happens without it.
+3. Share real keys with teammates privately, through a password manager or a direct message. Never put them in git: this repo is public.
 
 Research works with no keys. With `ANTHROPIC_API_KEY`, the five agents write with Claude Haiku. Without it, each agent falls back to rule-written text built from the same facts. With `APIFY_API_TOKEN`, builder contacts are looked up live. Without it, a bundled list of real Austin builders is used. Email and calls need Resend, SMTP or Twilio keys. Without them, the drafts still appear and sending shows a clear error. See `.env.example`.
 

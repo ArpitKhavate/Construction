@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+:root {
+  --trace: #f1e6ad;
+  --trace-deep: #e7d88b;
+  --paper: #fbf5d8;
+  --graphite: #34342f;
+  --graphite-soft: #5d5a4c;
+  --red: #c2541f;
+  --red-deep: #a2441a;
+}
+
+@theme inline {
+  --color-trace: var(--trace);
+  --color-trace-deep: var(--trace-deep);
+  --color-paper: var(--paper);
+  --color-graphite: var(--graphite);
+  --color-graphite-soft: var(--graphite-soft);
+  --color-red: var(--red);
+  --color-red-deep: var(--red-deep);
+  --font-sans: var(--font-archivo);
+  --font-lettering: var(--font-lettering);
+}
+
+body {
+  background: var(--trace);
+  color: var(--graphite);
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+}
+
+.display {
+  font-variation-settings: "wdth" 72;
+  letter-spacing: -0.02em;
+}
+
+/* Hand-lettered annotations, used only for notes on the drawing. */
+.note {
+  font-family: var(--font-lettering), cursive;
+  color: var(--graphite);
+  font-size: 15px;
+  line-height: 1.15;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  text-align: center;
+}
+.note span {
+  display: block;
+  font-size: 12px;
+  color: var(--graphite-soft);
+}
+.note-red {
+  color: var(--red);
+  font-size: 18px;
+}
+.note-red span {
+  color: var(--red);
+  font-size: 13px;
+}
+@media (max-width: 767px) {
+  .note { font-size: 13px; }
+  .note-red { font-size: 14px; }
+  .note span, .note-red span { font-size: 12px; }
+  .note-minor { display: none; }
+}
+
+.btn-red {
+  background: var(--red);
+  color: #fff8ef;
+  box-shadow: 0 1px 0 rgb(0 0 0 / 0.08), 0 8px 18px -8px rgb(162 68 26 / 0.55);
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1), transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-red:hover {
+  background: var(--red-deep);
+}
+.btn-red:active {
+  transform: translateY(1px);
+}
+.btn-red:focus-visible {
+  outline: 2px solid var(--graphite);
+  outline-offset: 3px;
+}
+
+/* Landing stage: soft daylight falloff behind the diorama. */
+.stage {
+  background:
+    radial-gradient(70% 60% at 66% 42%, #fffdf8 0%, rgb(255 253 248 / 0) 70%),
+    linear-gradient(180deg, #eef0ec 0%, #f3eee4 48%, #e6dccb 100%);
+}
+
+/* Labels pinned to the model: small paper chips. */
+.tag {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--graphite);
+  background: rgb(255 255 255 / 0.92);
+  padding: 6px 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgb(52 52 47 / 0.12), 0 6px 16px -6px rgb(52 52 47 / 0.25);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  text-align: center;
+}
+.tag span {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--graphite-soft);
+}
+.tag-quiet {
+  font-weight: 500;
+  background: rgb(255 255 255 / 0.75);
+}
+@media (max-width: 767px) {
+  .tag-quiet { display: none; }
+}
+
+/* Landing sky behind the street scene. */
+.sky {
+  background: linear-gradient(180deg, #a9d8f0 0%, #cbe8f5 45%, #e7f2f6 70%, #e7f2f6 100%);
+}

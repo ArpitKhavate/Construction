@@ -254,6 +254,38 @@ export function RunDesk({ id }: { id: string }) {
             ) : (
               <p className="muted">The checklist opens when all five agents have reported.</p>
             )}
+            {ready && run.builders?.length ? (
+              <div className="section">
+                <p className="kicker">Local builders</p>
+                <div className="checks">
+                  {run.builders.map((builder) => (
+                    <article key={builder.name} className="check">
+                      <span className="num">{builder.rating != null ? builder.rating.toFixed(1) : "–"}</span>
+                      <div>
+                        <h3>{builder.name}</h3>
+                        <p className="muted">
+                          {builder.reviews != null ? `${builder.reviews} Google reviews` : "No reviews yet"}
+                          {builder.address ? ` · ${builder.address}` : ""}
+                        </p>
+                        <p>
+                          {builder.phone ? <a href={`tel:${builder.phone.replace(/[^\d+]/g, "")}`}>{builder.phone}</a> : null}
+                          {builder.phone && (builder.website || builder.mapsUrl) ? " · " : null}
+                          {builder.website ? (
+                            <a href={builder.website} target="_blank" rel="noreferrer">
+                              Website
+                            </a>
+                          ) : builder.mapsUrl ? (
+                            <a href={builder.mapsUrl} target="_blank" rel="noreferrer">
+                              Google Maps
+                            </a>
+                          ) : null}
+                        </p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </section>
         </div>
 

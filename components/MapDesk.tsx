@@ -65,7 +65,7 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
     const satellite = mapStyle === "satellite";
     map.setLayoutProperty("voyager", "visibility", satellite ? "none" : "visible");
     map.setLayoutProperty("satellite", "visibility", satellite ? "visible" : "none");
-    map.setLayoutProperty("labels", "visibility", satellite ? "visible" : "none");
+    map.setLayoutProperty("labels", "visibility", satellite ? "none" : "visible");
   }, [mapStyle, ready]);
 
   useEffect(() => {
@@ -84,11 +84,13 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
         sources: {
           voyager: {
             type: "raster",
-            tiles: ["a", "b", "c", "d"].map(
-              (s) => `https://${s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png`,
-            ),
+            // Esri Light Gray Canvas: a clean, keyless street basemap (CARTO's tiles now need an API key).
+            tiles: [
+              "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+            ],
             tileSize: 256,
-            attribution: "© OpenStreetMap contributors © CARTO",
+            maxzoom: 16,
+            attribution: "Basemap © Esri, HERE, Garmin, © OpenStreetMap contributors",
           },
           satellite: {
             type: "raster",
@@ -101,18 +103,17 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
           },
           labels: {
             type: "raster",
-            tiles: ["a", "b", "c", "d"].map(
-              (s) =>
-                `https://${s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}@2x.png`,
-            ),
+            tiles: [
+              "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
+            ],
             tileSize: 256,
-            attribution: "© OpenStreetMap contributors © CARTO",
+            maxzoom: 16,
           },
         },
         layers: [
           { id: "voyager", type: "raster", source: "voyager" },
           { id: "satellite", type: "raster", source: "satellite", layout: { visibility: "none" } },
-          { id: "labels", type: "raster", source: "labels", layout: { visibility: "none" } },
+          { id: "labels", type: "raster", source: "labels" },
         ],
       },
     });
@@ -145,6 +146,8 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
       if (city.live) button.style.zIndex = "10";
     }
 
+    // "load" waits for every tile in view, which can lag during the landing flight; the style is enough to draw on.
+    map.once("style.load", () => setReady(true));
     map.on("load", () => setReady(true));
     return () => {
       spotMarkers.current.forEach((marker) => marker.remove());
@@ -195,7 +198,8 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
     spots.forEach((spot) => bounds.extend([spot.lng, spot.lat]));
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     map.fitBounds(bounds, {
-      padding: { top: 120, bottom: 90, left: 480, right: 90 },
+      // The map already pads the left by the panel width (setPadding), so only a small extra margin here.
+      padding: { top: 120, bottom: 90, left: 40, right: 90 },
       maxZoom: 13,
       duration: reduce ? 0 : 800,
     });
@@ -505,7 +509,7 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
             {researching ? "Running the five agents…" : "Research this spot"}
           </button>
           <p className="fine">
-            Thought bubbles are city-map points with a zoning and flood read. Nearest addresses come from the city
+            Numbered pins are city-map points with a zoning and flood read. Nearest addresses come from the city
             address layer. Sale prices are not part of this pass.
           </p>
         </div>

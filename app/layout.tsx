@@ -7,6 +7,7 @@ import "./crew-scan.css";
 import "./results-cleanup.css";
 import "./board.css";
 import "./builders.css";
+import "./map-panel.css";
 
 const archivo = Archivo({ variable: "--font-archivo", subsets: ["latin"], axes: ["wdth"] });
 

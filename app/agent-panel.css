@@ -1,0 +1,362 @@
+/* AgentPanel: the wide panel under the crew row. Replays the selected agent's real lookups.
+   Row timing comes from --ap-d (row enters) and --ap-r (mark resolves), set inline per row. */
+
+.ap-panel {
+  --ap-tint: var(--red);
+  --ap-run: 2100ms;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+  padding: 26px 28px 28px;
+  color: var(--graphite);
+  font-family: var(--sans);
+}
+
+.ap-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ap-avatar {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--ap-tint) 16%, white);
+  flex: none;
+}
+
+.ap-who {
+  flex: 1;
+  min-width: 0;
+}
+
+.ap-name {
+  margin: 0;
+  font-family: var(--serif);
+  font-variation-settings: "wdth" 72;
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+.ap-role {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--graphite-soft);
+}
+
+.ap-pill {
+  flex: none;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--paper-2);
+  color: var(--graphite-soft);
+}
+.ap-pill-working {
+  background: color-mix(in srgb, var(--ap-tint) 18%, white);
+  color: var(--graphite);
+}
+.ap-pill-done {
+  background: var(--good-bg);
+  color: var(--good);
+}
+.ap-pill-gap {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+/* Progress: rows checked */
+.ap-progress {
+  margin: 18px 0 22px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--paper-2);
+  overflow: hidden;
+}
+.ap-progress-fill {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: var(--ap-tint);
+}
+.ap-working .ap-progress-fill {
+  animation: ap-fill var(--ap-run) linear forwards;
+}
+.ap-done .ap-progress-fill,
+.ap-gap .ap-progress-fill {
+  width: 100%;
+  background: var(--good);
+}
+.ap-gap .ap-progress-fill {
+  background: #d9a43a;
+}
+
+/* Body: rows card on the left, summary column on the right */
+.ap-body {
+  display: grid;
+  grid-template-columns: minmax(0, 720px) minmax(260px, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+
+.ap-waiting {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--graphite-soft);
+}
+
+.ap-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0 18px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.ap-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  min-height: 64px;
+  box-sizing: border-box;
+}
+.ap-row + .ap-row {
+  border-top: 1px solid var(--line);
+}
+
+.ap-tile {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--ap-tint) 20%, white);
+  color: var(--graphite);
+}
+
+.ap-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ap-label {
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ap-result {
+  font-size: 14px;
+  color: var(--graphite-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ap-row-hit .ap-result {
+  color: var(--warn);
+  font-weight: 600;
+}
+
+.ap-status {
+  position: relative;
+  flex: none;
+  width: 26px;
+  height: 26px;
+}
+
+.ap-mark,
+.ap-spinner {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+.ap-mark {
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
+}
+.ap-mark-ok {
+  background: #2f9e5b;
+  color: #fff;
+}
+.ap-mark-hit {
+  background: #e3a72f;
+  color: #fff;
+}
+.ap-mark-none {
+  background: var(--paper-2);
+}
+.ap-dash {
+  width: 10px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--field);
+}
+
+.ap-spinner {
+  border: 2.5px solid color-mix(in srgb, var(--ap-tint) 25%, white);
+  border-top-color: var(--ap-tint);
+}
+
+/* Queued: rows listed, muted, no marks */
+.ap-queued .ap-row {
+  opacity: 0.5;
+}
+.ap-queued .ap-tile {
+  background: var(--paper-2);
+  color: var(--graphite-soft);
+}
+
+/* Working: rows enter one by one, spinner then a popped mark */
+.ap-working .ap-row {
+  animation: ap-enter 320ms ease-out var(--ap-d) both;
+}
+.ap-working .ap-spinner {
+  animation:
+    ap-spin 0.8s linear infinite,
+    ap-hide 120ms ease-out var(--ap-r) forwards;
+}
+.ap-working .ap-mark {
+  animation: ap-pop 380ms cubic-bezier(0.34, 1.56, 0.64, 1) var(--ap-r) both;
+}
+.ap-working .ap-result {
+  animation: ap-fade 260ms ease-out var(--ap-r) both;
+}
+
+/* Summary column */
+.ap-side-note {
+  margin: 4px 0 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--graphite-soft);
+}
+
+.ap-summary-block {
+  animation: ap-fade 400ms ease-out both;
+}
+.ap-summary {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--graphite);
+}
+
+.ap-toggle {
+  margin-top: 14px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--red-deep);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.ap-toggle:hover {
+  color: var(--red);
+}
+.ap-toggle:focus-visible,
+.ap-chip:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+
+.ap-bullets {
+  margin: 12px 0 0;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--graphite);
+}
+.ap-bullets li + li {
+  margin-top: 6px;
+}
+.ap-bullets li::marker {
+  color: var(--red);
+}
+
+.ap-sources {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ap-chip {
+  display: inline-block;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--red-deep);
+  text-decoration: none;
+  transition: border-color 150ms, background 150ms;
+}
+.ap-chip:hover {
+  border-color: var(--red);
+  background: var(--paper-2);
+}
+
+@media (max-width: 1080px) {
+  .ap-body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+  }
+}
+
+@keyframes ap-fill {
+  from { width: 0; }
+  to { width: 100%; }
+}
+@keyframes ap-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes ap-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes ap-hide {
+  to { opacity: 0; visibility: hidden; }
+}
+@keyframes ap-pop {
+  0% { opacity: 0; transform: scale(0.4); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes ap-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ap-panel *,
+  .ap-panel *::before {
+    animation: none !important;
+    transition: none !important;
+  }
+  .ap-working .ap-spinner {
+    display: none;
+  }
+  .ap-working .ap-progress-fill {
+    width: 100%;
+  }
+}

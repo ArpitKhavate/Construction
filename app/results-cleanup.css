@@ -229,3 +229,6 @@
     transition: none;
   }
 }
+
+/* Lead: space between the crew row and the agent panel. */
+.run .ap-panel { margin-top: 18px; }

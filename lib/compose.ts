@@ -21,6 +21,7 @@ export async function buildRun(input: {
   revision?: RunRecord["revision"];
   builders?: RunRecord["builders"];
   field?: FieldReport;
+  fieldMs?: number;
 }): Promise<RunRecord> {
   // Builders load beside the GIS read and are capped so they never hold the run up.
   const buildersJob = input.builders
@@ -28,7 +29,7 @@ export async function buildRun(input: {
     : findBuilders(input.constraints, input.spot).then((found) => found.builders);
   const started = Date.now();
   const field = input.field ?? (await readField(input.spot));
-  const elapsed = Date.now() - started;
+  const elapsed = input.fieldMs ?? Date.now() - started;
   const steps = await runAgents(input.spot, field, input.constraints, { prompt: input.prompt, fallbackMs: elapsed });
   const now = new Date().toISOString();
   const builders = await buildersJob;
@@ -69,6 +70,7 @@ export async function researchAddress(prompt: string, address: string) {
     const fact = await readAddress(address);
     return buildRun({ prompt, constraints, spot: annotateSpot(fact, constraints) });
   }
+  const liveStart = Date.now();
   // Demo addresses try live first, then fall back to the saved reading if the city servers are slow or down.
   const live = (async () => {
     const fact = await readAddress(address);
@@ -78,7 +80,7 @@ export async function researchAddress(prompt: string, address: string) {
   const got = await Promise.race([live, late]);
   const use = got && !degraded(got.field) ? got : demo;
   if (use === demo) console.warn(`[demo-cache] using the saved city reading for ${address}`);
-  return buildRun({ prompt, constraints, spot: annotateSpot(use.fact, constraints), field: use.field });
+  return buildRun({ prompt, constraints, spot: annotateSpot(use.fact, constraints), field: use.field, fieldMs: Date.now() - liveStart });
 }
 
 export async function reviseRun(run: RunRecord, feedback: string) {

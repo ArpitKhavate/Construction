@@ -1,0 +1,295 @@
+/* Builder cards: Google Maps builders near the lot, in the neobrutalist results style. */
+
+.run {
+  --nb-ink: #191c22;
+  --nb-border: 3px solid #191c22;
+  --nb-shadow: 6px 6px 0 #191c22;
+  --nb-shadow-sm: 4px 4px 0 #191c22;
+  --nb-grey: #e9e9ec;
+}
+
+.run .bc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 22px;
+  padding: 4px 8px 8px 0;
+}
+
+.run .bc-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: #fff;
+  border: var(--nb-border);
+  border-radius: 4px;
+  box-shadow: var(--nb-shadow);
+  color: var(--nb-ink);
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.run .bc-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0 var(--nb-ink);
+}
+
+/* Photo header with the logo tile hanging over its bottom edge. */
+.run .bc-photo {
+  position: relative;
+  height: 150px;
+  border-bottom: var(--nb-border);
+  background-color: var(--nb-grey);
+  background-image: repeating-linear-gradient(-45deg, rgba(194, 84, 31, 0.16) 0 10px, transparent 10px 20px);
+}
+
+.run .bc-photo > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1px 1px 0 0;
+}
+
+.run .bc-photo-empty {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  font-family: var(--serif);
+  font-variation-settings: "wdth" 72;
+  font-weight: 800;
+  font-size: 64px;
+  letter-spacing: -0.02em;
+  color: var(--red);
+  -webkit-text-stroke: 2px var(--nb-ink);
+}
+
+.run .bc-logo {
+  position: absolute;
+  left: 14px;
+  bottom: -26px;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  overflow: hidden;
+  background: #fff;
+  border: var(--nb-border);
+  border-radius: 4px;
+  box-shadow: var(--nb-shadow-sm);
+}
+
+.run .bc-logo img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.run .bc-logo span {
+  font-family: var(--serif);
+  font-variation-settings: "wdth" 72;
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--nb-ink);
+}
+
+.run .bc-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  padding: 34px 16px 16px;
+  font-family: var(--sans);
+}
+
+.run .bc-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.run .bc-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-family: var(--serif);
+  font-variation-settings: "wdth" 72;
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.run .bc-verified {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: #2f7de1;
+  stroke: var(--nb-ink);
+  stroke-width: 1.5;
+}
+
+.run .bc-verified .bc-verified-tick {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Category sticker. */
+.run .bc-cat {
+  display: inline-block;
+  padding: 3px 8px;
+  background: #ffd84d;
+  border: 2px solid var(--nb-ink);
+  border-radius: 3px;
+  box-shadow: 2px 2px 0 var(--nb-ink);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transform: rotate(-1.5deg);
+}
+
+.run .bc-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.run .bc-rating-none {
+  color: #5a5f6b;
+}
+
+.run .bc-stars {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.run .bc-star {
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+}
+
+.run .bc-star svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  fill: #fff;
+  stroke: var(--nb-ink);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+
+.run .bc-star-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  overflow: hidden;
+}
+
+.run .bc-star-fill svg {
+  fill: #f5b301;
+}
+
+.run .bc-rating-num {
+  font-weight: 800;
+}
+
+.run .bc-rating-count {
+  color: #5a5f6b;
+}
+
+.run .bc-review {
+  margin: 0;
+  padding: 10px 12px;
+  background: var(--nb-grey);
+  border: 2px solid var(--nb-ink);
+  border-left-width: 6px;
+  border-left-color: var(--red);
+  border-radius: 3px;
+}
+
+.run .bc-review p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.run .bc-review cite {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.run .bc-review cite::before {
+  content: "— ";
+}
+
+.run .bc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.run .bc-chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 5px 10px;
+  overflow: hidden;
+  background: #fff;
+  border: 2px solid var(--nb-ink);
+  border-radius: 3px;
+  box-shadow: 2px 2px 0 var(--nb-ink);
+  color: var(--nb-ink);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: transform 100ms ease, box-shadow 100ms ease, background-color 100ms ease;
+}
+
+.run a.bc-chip:hover {
+  background: #ffd84d;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--nb-ink);
+}
+
+.run a.bc-chip:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--nb-ink);
+}
+
+.run a.bc-chip:focus-visible {
+  outline: 3px solid var(--red);
+  outline-offset: 2px;
+}
+
+.run .bc-chip-muted {
+  display: block;
+  background: var(--nb-grey);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .run .bc-card,
+  .run .bc-chip {
+    transition: none;
+  }
+
+  .run .bc-card:hover,
+  .run a.bc-chip:hover,
+  .run a.bc-chip:active {
+    transform: none;
+  }
+}

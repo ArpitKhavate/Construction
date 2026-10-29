@@ -147,6 +147,10 @@ export type Builder = {
   rating: number | null;
   reviews: number | null;
   mapsUrl: string | null;
+  category?: string | null;
+  photo?: string | null;
+  review?: string | null;
+  reviewer?: string | null;
 };
 
 export type RunRecord = {

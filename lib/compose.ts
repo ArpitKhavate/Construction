@@ -1,0 +1,103 @@
+import { applyFeedback, constraintsChanged, parseConstraints } from "@/lib/constraints";
+import { loadAnchorFacts, readField } from "@/lib/gis";
+import { annotateSpot, rankSpots } from "@/lib/rank";
+import { buildCall, buildChecklist, buildEmail, buildSteps } from "@/lib/report";
+import type { Constraints, RunRecord, Spot } from "@/lib/types";
+
+export async function buildRun(input: {
+  prompt: string;
+  constraints: Constraints;
+  spot: Spot;
+  id?: string;
+  createdAt?: string;
+  feedback?: string[];
+  revision?: RunRecord["revision"];
+}): Promise<RunRecord> {
+  const started = Date.now();
+  const field = await readField(input.spot);
+  const elapsed = Date.now() - started;
+  const timings = {
+    codes: elapsed,
+    hazards: elapsed,
+    permits: elapsed,
+    environmental: elapsed,
+    development: elapsed,
+  };
+  const now = new Date().toISOString();
+  return {
+    id: input.id ?? crypto.randomUUID(),
+    prompt: input.prompt,
+    constraints: input.constraints,
+    spot: input.spot,
+    field,
+    steps: buildSteps(input.spot, field, input.constraints, timings),
+    checklist: buildChecklist(input.constraints, field),
+    email: buildEmail(input.spot, field, input.constraints),
+    call: buildCall(input.spot, field, input.constraints),
+    render: null,
+    permitsPacket: null,
+    revision: input.revision ?? null,
+    feedback: input.feedback ?? [],
+    durationMs: elapsed,
+    createdAt: input.createdAt ?? now,
+    updatedAt: now,
+  };
+}
+
+export async function researchSpot(prompt: string, spotId: string) {
+  const constraints = parseConstraints(prompt);
+  const facts = await loadAnchorFacts();
+  const fact = facts.find((item) => item.id === spotId);
+  if (!fact) throw new Error("That spot is not in the current Austin set. Search again and pick a thought bubble.");
+  const spot = annotateSpot(fact, constraints);
+  return buildRun({ prompt, constraints, spot });
+}
+
+export async function reviseRun(run: RunRecord, feedback: string) {
+  const text = feedback.trim();
+  if (text.length < 2) throw new Error("Tell the agents what to change.");
+  const constraints = applyFeedback(run.constraints, text);
+  const changed = constraintsChanged(run.constraints, constraints);
+  if (!changed) {
+    return {
+      ...run,
+      feedback: [...run.feedback, text],
+      revision: {
+        note: `Feedback noted: "${text}". The unit count, flood preference, and building type did not change, so the spot and the checklist stay put. Try "avoid the floodplain" or "only 3 homes".`,
+        fromName: run.spot.name,
+        toName: run.spot.name,
+        moved: false,
+      },
+      updatedAt: new Date().toISOString(),
+    };
+  }
+  const facts = await loadAnchorFacts();
+  const ranked = rankSpots(facts, constraints);
+  const current = facts.find((item) => item.id === run.spot.id);
+  const rescored = current ? annotateSpot(current, constraints) : null;
+  const stayed = Boolean(rescored && rescored.band !== "weak");
+  const pick = facts.find((item) => item.id === (stayed ? run.spot.id : ranked[0]?.id));
+  if (!pick) throw new Error("Austin spots could not be ranked again.");
+  const spot = annotateSpot(pick, constraints);
+  const note = stayed
+    ? `${spot.name} still fits after "${text}". The checklist was rewritten for the new request.`
+    : `${run.spot.name} dropped off the shortlist. ${rescored?.caution ?? "It no longer matches the request."} ${spot.name} is the new recommendation.`;
+  const next = await buildRun({
+    prompt: run.prompt,
+    constraints,
+    spot,
+    id: run.id,
+    createdAt: run.createdAt,
+    feedback: [...run.feedback, text],
+    revision: {
+      note,
+      fromName: run.spot.name,
+      toName: spot.name,
+      moved: !stayed,
+    },
+  });
+  if (run.email.status === "sent") next.email = run.email;
+  if (run.call.status === "placed") next.call = run.call;
+  if (run.render && run.spot.id === next.spot.id) next.render = run.render;
+  return next;
+}

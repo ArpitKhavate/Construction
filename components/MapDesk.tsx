@@ -15,7 +15,7 @@ const EXAMPLES = [
 ];
 
 // 3105 Cherrywood Rd. The landing flight ends over this lot, so the map starts here and pulls out to the city.
-const LOT: [number, number] = [-97.7168, 30.2862];
+const AUSTIN_VIEW = { center: [-97.743, 30.29] as [number, number], zoom: 11.5 };
 
 const BAND = { strong: "Strong match", possible: "Possible", weak: "Weak match" };
 
@@ -34,12 +34,20 @@ type RecommendResponse = {
   error?: string;
 };
 
-export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: () => void }) {
+export default function MapDesk({
+  story,
+  onHome,
+  onSettled,
+}: {
+  story?: MapStory;
+  onHome?: () => void;
+  onSettled?: () => void;
+}) {
   const mapNode = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MlMap | null>(null);
-  const padRef = useRef<number | null>(null);
-  const flew = useRef(false);
   const settled = useRef(false);
+  const onSettledRef = useRef(onSettled);
+  onSettledRef.current = onSettled;
   const spotMarkers = useRef<Marker[]>([]);
   const router = useRouter();
   const params = useSearchParams();
@@ -73,12 +81,12 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const map = new maplibregl.Map({
       container: mapNode.current,
-      center: story ? LOT : [-98.6, 39.5],
-      zoom: story ? 17 : 3.5,
+      center: story ? AUSTIN_VIEW.center : [-98.6, 39.5],
+      zoom: story ? AUSTIN_VIEW.zoom : 3.5,
       minZoom: 2.5,
       maxZoom: 18,
       attributionControl: { compact: true },
-      fadeDuration: 0,
+      fadeDuration: 220,
       style: {
         version: 8,
         sources: {
@@ -146,9 +154,16 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
       if (city.live) button.style.zIndex = "10";
     }
 
+<<<<<<< Updated upstream
     // "load" waits for every tile in view, which can lag during the landing flight; the style is enough to draw on.
     map.once("style.load", () => setReady(true));
     map.on("load", () => setReady(true));
+=======
+    map.on("load", () => {
+      setReady(true);
+      map.once("idle", () => onSettledRef.current?.());
+    });
+>>>>>>> Stashed changes
     return () => {
       spotMarkers.current.forEach((marker) => marker.remove());
       map.remove();
@@ -234,7 +249,6 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
   }, [ready]);
 
   const live = story ? story.revealed : true;
-  const pad = Math.round(460 * (story ? story.panel : 1));
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready) return;
@@ -250,28 +264,11 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
     } else {
       map.touchZoomRotate.disable();
     }
-    if (padRef.current !== pad) {
-      padRef.current = pad;
-      map.setPadding({ left: pad });
-    }
     if (live && !settled.current) {
       settled.current = true;
       map.resize();
     }
-  }, [ready, live, pad]);
-
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !ready || !story || flew.current) return;
-    if (story.progress < 0.42 && !story.revealed) return;
-    flew.current = true;
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    map.flyTo({
-      center: [-97.743, 30.29],
-      zoom: 11.5,
-      duration: reduceMotion || story.revealed ? 0 : 1700,
-    });
-  }, [ready, story]);
+  }, [ready, live]);
 
   async function search(text: string, preferId?: string | null) {
     const idea = text.trim();

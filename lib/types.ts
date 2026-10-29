@@ -153,6 +153,23 @@ export type Builder = {
   reviewer?: string | null;
 };
 
+export type DesignPhoto = {
+  id: string;
+  kind: "exterior" | "interior";
+  before: string;
+  after: string;
+  palette: string[];
+  place: string;
+  sourceUrl: string | null;
+};
+
+export type DesignBoard = {
+  source: "live" | "cache";
+  scrapedAt: string;
+  photos: DesignPhoto[];
+  steps: { step: string; note: string }[];
+};
+
 export type RunRecord = {
   id: string;
   prompt: string;
@@ -165,6 +182,7 @@ export type RunRecord = {
   call: CallDraft;
   builders?: Builder[];
   render: RenderResult | null;
+  design?: DesignBoard | null;
   permitsPacket: PermitPacket | null;
   revision: Revision | null;
   feedback: string[];

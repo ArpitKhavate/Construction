@@ -9,10 +9,11 @@ const MapDesk = dynamic(() => import("@/components/MapDesk"), { ssr: false });
 const StreetScene = dynamic(() => import("@/components/StreetScene"), { ssr: false });
 
 // Scrolling down (wheel, swipe, keys) or pressing the hero button flies the street camera to a
-// top-down view, then the satellite map fades in over it and pulls out from the lot to Austin.
-// Timings line up with the 2s camera flight in StreetScene.
-const FADE_AT = 1500;
-const REVEAL_AT = 2400;
+// top-down view, then the satellite map (already drawn over Austin while hidden) settles in over it.
+// Timings line up with the 2s camera flight in StreetScene and the .land-map transition.
+const FADE_AT = 1350;
+const REVEAL_AFTER = 1500;
+const GIVE_UP_AT = 6000;
 
 const MENUS = [
   { label: "About us", body: "Austin site research before the lot is under contract." },
@@ -31,8 +32,11 @@ export default function Landing() {
   const hero: Hero = raw === "a" || raw === "c" ? raw : "b";
 
   const [view, setView] = useState<SceneView>("street");
-  const [mapShown, setMapShown] = useState(false);
+  const [mapReady, setMapReady] = useState(false);
+  const [due, setDue] = useState(false);
+  const [gaveUp, setGaveUp] = useState(false);
   const [revealed, setRevealed] = useState(false);
+  const mapShown = due && (mapReady || gaveUp);
 
   useEffect(() => {
     if (jump || view !== "street") return;
@@ -63,18 +67,26 @@ export default function Landing() {
 
   useEffect(() => {
     if (view !== "map") {
-      setMapShown(false);
+      setDue(false);
+      setGaveUp(false);
       setRevealed(false);
       return;
     }
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const fade = window.setTimeout(() => setMapShown(true), reduce ? 0 : FADE_AT);
-    const reveal = window.setTimeout(() => setRevealed(true), reduce ? 0 : REVEAL_AT);
+    const fade = window.setTimeout(() => setDue(true), reduce ? 0 : FADE_AT);
+    const giveUp = window.setTimeout(() => setGaveUp(true), GIVE_UP_AT);
     return () => {
       window.clearTimeout(fade);
-      window.clearTimeout(reveal);
+      window.clearTimeout(giveUp);
     };
   }, [view]);
+
+  useEffect(() => {
+    if (!mapShown) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reveal = window.setTimeout(() => setRevealed(true), reduce ? 0 : REVEAL_AFTER);
+    return () => window.clearTimeout(reveal);
+  }, [mapShown]);
 
   if (jump) {
     return (
@@ -145,13 +157,14 @@ export default function Landing() {
       </div>
 
       <div
-        className={`land-map${mapShown ? " is-on" : ""}`}
+        className={`land-map${mapShown ? " is-on" : ""}${revealed ? " is-live" : ""}`}
         aria-hidden={!revealed}
         inert={!revealed ? true : undefined}
       >
         <MapDesk
           story={{ blur: 0, dim: 1, revealed, progress: mapShown ? 1 : 0, panel: revealed ? 1 : 0 }}
           onHome={() => setView("street")}
+          onSettled={() => setMapReady(true)}
         />
       </div>
     </main>

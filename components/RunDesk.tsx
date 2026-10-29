@@ -436,9 +436,14 @@ export function RunDesk({ id }: { id: string }) {
           <p className="muted">
             The pipeline stitches a city aerial, corrects tone and color, sharpens it, and draws a roof plate. The plate is a diagram.
           </p>
-          <button className="btn" type="button" disabled={rendering} onClick={() => void renderAerial()}>
-            {rendering ? "Rendering…" : run.render ? "Render again" : "Render this spot"}
-          </button>
+          <div className="actions">
+            <button className="btn" type="button" disabled={rendering} onClick={() => void renderAerial()}>
+              {rendering ? "Rendering…" : run.render ? "Render again" : "Render this spot"}
+            </button>
+            <Link className="btn btn-build" href={`/runs/${id}/build`}>
+              Design this build in 3D →
+            </Link>
+          </div>
           {run.render ? (
             <>
               <div className="slider" style={{ marginTop: 14 }}>

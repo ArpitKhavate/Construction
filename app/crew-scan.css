@@ -1,6 +1,52 @@
-/* ---------- Crew: pickable cards and the loading scan list ---------- */
+/* ---------- Crew: neobrutalist cards, pickable cards and the loading scan list ---------- */
+/* Overrides the base crew styles in theme.css ("Crew characters"); theme.css stays untouched. */
 
-/* Cards as buttons (results page): reset the button, keep the frosted card look. */
+.crew,
+.crew-overlay {
+  --nb-ink: #191c22;
+  --nb-border: 3px solid #191c22;
+  --nb-shadow: 6px 6px 0 #191c22;
+  --nb-shadow-sm: 4px 4px 0 #191c22;
+  --nb-grey: #e9e9ec;
+}
+
+/* Cards: thick ink frame, hard shadow, square corners, flat fill. */
+.crew-card {
+  border-radius: 4px;
+  border: var(--nb-border);
+  background: #fff;
+  box-shadow: var(--nb-shadow);
+  backdrop-filter: none;
+}
+.crew-card.is-queued {
+  background: var(--nb-grey);
+}
+.crew-card.is-working {
+  background: #fff;
+  box-shadow: var(--nb-shadow);
+}
+
+/* Check / gap badges as bordered stamps */
+.crew-badge {
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--nb-ink);
+  border-radius: 3px;
+  box-shadow: 2px 2px 0 var(--nb-ink);
+}
+.crew-badge.ok { background: #2f9e5b; color: #fff; }
+.crew-badge.gap { background: #f2b33d; color: var(--nb-ink); }
+
+/* Typing bubble as a bordered speech tag */
+.crew-typing {
+  border: 2px solid var(--nb-ink);
+  border-radius: 4px;
+  box-shadow: 3px 3px 0 var(--nb-ink);
+}
+
+/* Cards as buttons (results page): reset the button, keep the frame. */
 button.crew-card {
   display: block;
   width: 100%;
@@ -11,117 +57,176 @@ button.crew-card {
   cursor: pointer;
   appearance: none;
   -webkit-tap-highlight-color: transparent;
-  transition: background-color 400ms ease, box-shadow 220ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 200ms ease, box-shadow 120ms ease, transform 120ms ease;
 }
 button.crew-card .crew-hop,
 button.crew-card .crew-body { display: block; }
 
-button.crew-card:hover { transform: translateY(-3px); }
-button.crew-card:active { transform: translateY(-1px); }
+button.crew-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0 var(--nb-ink);
+}
+button.crew-card:active {
+  transform: translate(3px, 3px);
+  box-shadow: 2px 2px 0 var(--nb-ink);
+}
 button.crew-card:focus { outline: none; }
 button.crew-card:focus-visible {
-  outline: 2px solid var(--red);
+  outline: 3px solid var(--red);
   outline-offset: 4px;
 }
 
-/* Selected: graphite ring, lifted, brighter glass. */
+/* Selected: accent tint, lifted, heavier shadow. */
 button.crew-card.cs-selected {
-  transform: translateY(-5px);
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.86) 0%, rgb(255 255 255 / 0.5) 100%);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.9),
-    0 0 0 2px var(--graphite),
-    0 20px 40px -18px rgb(52 52 47 / 0.55);
+  transform: translate(-4px, -4px);
+  background: color-mix(in srgb, var(--red) 20%, white);
+  box-shadow: 8px 8px 0 var(--nb-ink);
 }
-button.crew-card.cs-selected:hover { transform: translateY(-6px); }
+button.crew-card.cs-selected:hover {
+  transform: translate(-5px, -5px);
+  box-shadow: 9px 9px 0 var(--nb-ink);
+}
+button.crew-card.cs-selected:active {
+  transform: translate(0, 0);
+  box-shadow: 4px 4px 0 var(--nb-ink);
+}
 
-/* Labels: clickable by mouse, the picked name stands out, a caret points at the panel below. */
-.cs-pickable .crew-labels { padding-bottom: 14px; }
+/* Labels: clickable by mouse, the picked name stands out, a solid caret points at the panel below. */
+.crew-labels b { text-transform: uppercase; }
+.cs-pickable .crew-labels { padding-bottom: 16px; }
 .cs-pickable .crew-labels > div {
   position: relative;
   cursor: pointer;
-  transition: opacity 220ms ease;
 }
 .cs-pickable .crew-labels > div:not(.cs-picked) b { color: var(--graphite-soft); }
-.cs-pickable .crew-labels > div.cs-picked b { color: var(--graphite); }
-.cs-pickable .crew-labels > div.cs-picked b::after {
-  content: "";
-  display: block;
-  width: 28px;
-  height: 3px;
-  margin: 3px auto 0;
-  border-radius: 2px;
-  background: var(--red);
-}
+.cs-pickable .crew-labels > div.cs-picked b { color: var(--nb-ink); }
 .cs-pickable .crew-labels > div.cs-picked::after {
   content: "";
   position: absolute;
   left: 50%;
-  bottom: -16px;
+  bottom: -18px;
   width: 0;
   height: 0;
-  border-left: 9px solid transparent;
-  border-right: 9px solid transparent;
-  border-top: 9px solid var(--graphite);
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid var(--nb-ink);
   transform: translateX(-50%);
-  animation: cs-caret 260ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: cs-caret 200ms ease-out both;
 }
 @keyframes cs-caret {
   from { opacity: 0; transform: translate(-50%, -6px); }
   to { opacity: 1; transform: translate(-50%, 0); }
 }
 
-/* Loading sheet: the layers each agent is reading, each with a looping spinner. */
+/* Loading sheet: a bordered card over the map. */
+.crew-sheet {
+  border: var(--nb-border);
+  border-radius: 4px;
+  box-shadow: var(--nb-shadow);
+}
+
+/* Loading lists: one shared clock for all five agents. The cycle has six 500ms slots;
+   in slot k line k is highlighted, lines before it carry a tick, and the sixth slot holds
+   every line ticked before the cycle restarts. Every list runs the same animation from
+   the same mount, so the highlight moves down all of them in lockstep. */
 .cs-scan {
+  --cs-cycle: 3000ms;
   display: inline-flex;
   flex-direction: column;
-  gap: 4px;
-  margin: 8px 0 0;
+  gap: 3px;
+  margin: 10px 0 0;
   padding: 0;
   list-style: none;
   text-align: left;
   font-size: 12.5px;
+  font-weight: 600;
   line-height: 1.25;
-  color: var(--muted);
+  color: var(--nb-ink);
 }
 .cs-scan li {
   display: flex;
   align-items: center;
   gap: 7px;
-  opacity: 0;
-  animation:
-    cs-in 360ms ease calc(var(--j) * 120ms + 300ms) forwards,
-    cs-read 4.2s ease-in-out calc(var(--j) * 0.55s + 900ms) infinite;
+  padding: 2px 6px 2px 4px;
+  border: 2px solid transparent;
+  border-radius: 3px;
+  animation: var(--cs-cycle) linear infinite;
 }
-.cs-spin {
+.cs-box {
+  position: relative;
   flex: none;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: 1.6px solid rgb(52 52 47 / 0.18);
-  border-top-color: var(--red);
-  animation: cs-spin 0.9s linear calc(var(--j) * -0.17s) infinite;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--nb-ink);
+  border-radius: 2px;
+  background: #fff;
+  box-sizing: border-box;
 }
-@keyframes cs-spin {
-  to { transform: rotate(360deg); }
+.cs-box::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: -3px;
+  width: 4px;
+  height: 9px;
+  border: solid #2f9e5b;
+  border-width: 0 3px 3px 0;
+  transform: rotate(40deg);
+  opacity: 0;
+  animation: var(--cs-cycle) linear infinite;
 }
-@keyframes cs-in {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 0.8; transform: none; }
+
+.cs-scan li:nth-child(1) { animation-name: cs-hl-0; }
+.cs-scan li:nth-child(2) { animation-name: cs-hl-1; }
+.cs-scan li:nth-child(3) { animation-name: cs-hl-2; }
+.cs-scan li:nth-child(4) { animation-name: cs-hl-3; }
+.cs-scan li:nth-child(5) { animation-name: cs-hl-4; }
+.cs-scan li:nth-child(1) .cs-box::after { animation-name: cs-tk-0; }
+.cs-scan li:nth-child(2) .cs-box::after { animation-name: cs-tk-1; }
+.cs-scan li:nth-child(3) .cs-box::after { animation-name: cs-tk-2; }
+.cs-scan li:nth-child(4) .cs-box::after { animation-name: cs-tk-3; }
+.cs-scan li:nth-child(5) .cs-box::after { animation-name: cs-tk-4; }
+
+/* highlight: on only during its own slot */
+@keyframes cs-hl-0 {
+  0%, 16.6% { background: #ffd84d; border-color: #191c22; }
+  16.7%, 100% { background: transparent; border-color: transparent; }
 }
-/* a reading highlight that drifts down each list */
-@keyframes cs-read {
-  0%, 100% { opacity: 0.8; color: var(--muted); }
-  12% { opacity: 1; color: var(--graphite); }
-  28% { opacity: 0.8; color: var(--muted); }
+@keyframes cs-hl-1 {
+  0%, 16.6% { background: transparent; border-color: transparent; }
+  16.7%, 33.3% { background: #ffd84d; border-color: #191c22; }
+  33.4%, 100% { background: transparent; border-color: transparent; }
 }
+@keyframes cs-hl-2 {
+  0%, 33.3% { background: transparent; border-color: transparent; }
+  33.4%, 50% { background: #ffd84d; border-color: #191c22; }
+  50.1%, 100% { background: transparent; border-color: transparent; }
+}
+@keyframes cs-hl-3 {
+  0%, 50% { background: transparent; border-color: transparent; }
+  50.1%, 66.6% { background: #ffd84d; border-color: #191c22; }
+  66.7%, 100% { background: transparent; border-color: transparent; }
+}
+@keyframes cs-hl-4 {
+  0%, 66.6% { background: transparent; border-color: transparent; }
+  66.7%, 83.3% { background: #ffd84d; border-color: #191c22; }
+  83.4%, 100% { background: transparent; border-color: transparent; }
+}
+/* tick: appears once the highlight has passed, clears at the cycle restart */
+@keyframes cs-tk-0 { 0%, 16.6% { opacity: 0; } 16.7%, 100% { opacity: 1; } }
+@keyframes cs-tk-1 { 0%, 33.3% { opacity: 0; } 33.4%, 100% { opacity: 1; } }
+@keyframes cs-tk-2 { 0%, 50% { opacity: 0; } 50.1%, 100% { opacity: 1; } }
+@keyframes cs-tk-3 { 0%, 66.6% { opacity: 0; } 66.7%, 100% { opacity: 1; } }
+@keyframes cs-tk-4 { 0%, 83.3% { opacity: 0; } 83.4%, 100% { opacity: 1; } }
 
 @media (prefers-reduced-motion: reduce) {
   button.crew-card,
   button.crew-card:hover,
+  button.crew-card:active,
   button.crew-card.cs-selected,
-  button.crew-card.cs-selected:hover { transition: none; transform: none; }
+  button.crew-card.cs-selected:hover,
+  button.crew-card.cs-selected:active { transition: none; transform: none; }
   .cs-pickable .crew-labels > div.cs-picked::after { animation: none; }
-  .cs-scan li { animation: none; opacity: 0.85; }
-  .cs-spin { animation: none; border-color: rgb(52 52 47 / 0.35); }
+  .cs-scan li,
+  .cs-box::after { animation: none; }
 }

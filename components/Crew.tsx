@@ -42,7 +42,8 @@ function finding(run: RunRecord, id: AgentId): { found: boolean; line: string } 
   }
 }
 
-// The real layers each agent reads, listed under it on the loading sheet.
+// The real layers each agent reads, listed under it on the loading sheet. One shared clock
+// (app/crew-scan.css) walks a highlight down every list in lockstep, ticking lines it passed.
 const SCANS: Record<AgentId, string[]> = {
   codes: ["Zoning map", "Base district", "Historic districts"],
   hazards: ["FEMA flood zones", "City floodplain", "Pipelines", "Wildfire", "Airport"],
@@ -131,14 +132,14 @@ export function CrewOverlay({ place }: { place: string }) {
           ))}
         </div>
         <div className="crew-row crew-labels">
-          {members.map((member, index) => (
+          {members.map((member) => (
             <div key={member.id}>
               <b>{member.name}</b>
               <span>{member.role}</span>
               <ul className="cs-scan" aria-label={`${member.name} is reading`}>
-                {SCANS[member.id].map((layer, j) => (
-                  <li key={layer} style={{ "--j": index * 2 + j } as React.CSSProperties}>
-                    <i className="cs-spin" aria-hidden="true" />
+                {SCANS[member.id].map((layer) => (
+                  <li key={layer}>
+                    <i className="cs-box" aria-hidden="true" />
                     {layer}
                   </li>
                 ))}

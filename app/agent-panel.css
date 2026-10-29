@@ -1,15 +1,26 @@
 /* AgentPanel: the wide panel under the crew row. Replays the selected agent's real lookups.
-   Row timing comes from --ap-d (row enters) and --ap-r (mark resolves), set inline per row. */
+   Neobrutalist card: thick ink borders, hard offset shadows, square corners.
+   One shared clock drives the replay: each row owns an equal slot (--ap-slot), starts at --ap-a
+   and stamps at --ap-r (set inline per row), so exactly one row is active at a time. */
 
 .ap-panel {
+  --nb-ink: #191c22;
+  --nb-border: 3px solid #191c22;
+  --nb-shadow: 6px 6px 0 #191c22;
+  --nb-shadow-sm: 4px 4px 0 #191c22;
+  --nb-grey: #e9e9ec;
   --ap-tint: var(--red);
-  --ap-run: 2100ms;
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  box-shadow: var(--shadow-card);
-  padding: 26px 28px 28px;
-  color: var(--graphite);
+  --ap-run: 2200ms;
+  --ap-slot: 500ms;
+  --ap-ok: #2f9e5b;
+  --ap-hit: #f2b33d;
+  position: relative;
+  background: #fff;
+  border: var(--nb-border);
+  border-radius: 4px;
+  box-shadow: var(--nb-shadow);
+  padding: 24px 26px 26px;
+  color: var(--nb-ink);
   font-family: var(--sans);
 }
 
@@ -20,12 +31,22 @@
 }
 
 .ap-avatar {
-  width: 64px;
-  height: 64px;
-  object-fit: contain;
-  border-radius: 16px;
-  background: color-mix(in srgb, var(--ap-tint) 16%, white);
   flex: none;
+  width: 68px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  border: var(--nb-border);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--ap-tint) 28%, white);
+  box-shadow: var(--nb-shadow-sm);
+  overflow: hidden;
+}
+.ap-avatar img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  display: block;
 }
 
 .ap-who {
@@ -38,64 +59,75 @@
   font-family: var(--serif);
   font-variation-settings: "wdth" 72;
   font-weight: 800;
-  font-size: 28px;
-  line-height: 1;
-  letter-spacing: 0.01em;
+  font-size: 34px;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
 }
 
 .ap-role {
   margin: 4px 0 0;
   font-size: 14px;
+  font-weight: 600;
   color: var(--graphite-soft);
 }
 
+/* Status sticker: tilted tag with border + hard shadow */
 .ap-pill {
   flex: none;
-  padding: 6px 12px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 600;
-  background: var(--paper-2);
-  color: var(--graphite-soft);
+  padding: 5px 12px 4px;
+  border: 2px solid var(--nb-ink);
+  border-radius: 3px;
+  box-shadow: 3px 3px 0 var(--nb-ink);
+  font-family: var(--serif);
+  font-variation-settings: "wdth" 72;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--nb-grey);
+  color: var(--nb-ink);
+  transform: rotate(-4deg);
 }
 .ap-pill-working {
-  background: color-mix(in srgb, var(--ap-tint) 18%, white);
-  color: var(--graphite);
+  background: #ffd84d;
 }
 .ap-pill-done {
-  background: var(--good-bg);
-  color: var(--good);
+  background: var(--ap-ok);
+  color: #fff;
+  transform: rotate(3deg);
 }
 .ap-pill-gap {
-  background: var(--warn-bg);
-  color: var(--warn);
+  background: var(--ap-hit);
+  transform: rotate(3deg);
 }
 
-/* Progress: rows checked */
+/* Progress: bordered track, solid fill */
 .ap-progress {
-  margin: 18px 0 22px;
-  height: 4px;
-  border-radius: 999px;
-  background: var(--paper-2);
+  margin: 20px 0 22px;
+  height: 14px;
+  border: 2px solid var(--nb-ink);
+  border-radius: 3px;
+  background: #fff;
   overflow: hidden;
 }
 .ap-progress-fill {
   display: block;
   height: 100%;
   width: 0;
-  border-radius: inherit;
   background: var(--ap-tint);
 }
 .ap-working .ap-progress-fill {
+  border-right: 2px solid var(--nb-ink);
   animation: ap-fill var(--ap-run) linear forwards;
 }
 .ap-done .ap-progress-fill,
 .ap-gap .ap-progress-fill {
   width: 100%;
-  background: var(--good);
+  background: var(--ap-ok);
 }
 .ap-gap .ap-progress-fill {
-  background: #d9a43a;
+  background: var(--ap-hit);
 }
 
 /* Body: rows card on the left, summary column on the right */
@@ -109,40 +141,47 @@
 .ap-waiting {
   margin: 0 0 10px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--graphite-soft);
 }
 
 .ap-rows {
   list-style: none;
   margin: 0;
-  padding: 0 18px;
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: 16px;
+  padding: 0;
+  background: #fff;
+  border: var(--nb-border);
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .ap-row {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 12px 0;
-  min-height: 64px;
+  padding: 10px 16px;
+  min-height: 60px;
   box-sizing: border-box;
 }
 .ap-row + .ap-row {
-  border-top: 1px solid var(--line);
+  border-top: 2px solid var(--nb-ink);
+}
+.ap-row > * {
+  position: relative;
+  z-index: 1;
 }
 
 .ap-tile {
   flex: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 11px;
+  width: 38px;
+  height: 38px;
+  border: 2px solid var(--nb-ink);
+  border-radius: 3px;
   display: grid;
   place-items: center;
-  background: color-mix(in srgb, var(--ap-tint) 20%, white);
-  color: var(--graphite);
+  background: color-mix(in srgb, var(--ap-tint) 22%, white);
+  color: var(--nb-ink);
 }
 
 .ap-text {
@@ -154,7 +193,7 @@
 }
 .ap-label {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -168,124 +207,168 @@
 }
 .ap-row-hit .ap-result {
   color: var(--warn);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .ap-status {
   position: relative;
   flex: none;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
 }
 
-.ap-mark,
-.ap-spinner {
+/* Stamps: filled squares with a 2px ink border */
+.ap-mark {
   position: absolute;
   inset: 0;
-  border-radius: 50%;
-}
-.ap-mark {
   display: grid;
   place-items: center;
-  font-size: 15px;
-  font-weight: 800;
+  border: 2px solid var(--nb-ink);
+  border-radius: 3px;
+  box-shadow: 2px 2px 0 var(--nb-ink);
+  font-size: 16px;
+  font-weight: 900;
   line-height: 1;
 }
 .ap-mark-ok {
-  background: #2f9e5b;
+  background: var(--ap-ok);
   color: #fff;
 }
 .ap-mark-hit {
-  background: #e3a72f;
-  color: #fff;
+  background: var(--ap-hit);
+  color: var(--nb-ink);
 }
 .ap-mark-none {
-  background: var(--paper-2);
+  background: var(--nb-grey);
 }
 .ap-dash {
   width: 10px;
-  height: 2px;
+  height: 3px;
+  background: #8a8d94;
+}
+
+/* The single active-row indicator: a pulsing ink dot in the status slot */
+.ap-pulse {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+}
+.ap-pulse::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--nb-ink);
   border-radius: 2px;
-  background: var(--field);
+  background: var(--ap-tint);
 }
 
-.ap-spinner {
-  border: 2.5px solid color-mix(in srgb, var(--ap-tint) 25%, white);
-  border-top-color: var(--ap-tint);
-}
-
-/* Queued: rows listed, muted, no marks */
+/* Queued: rows listed, muted, empty slots */
 .ap-queued .ap-row {
-  opacity: 0.5;
+  opacity: 0.45;
 }
 .ap-queued .ap-tile {
-  background: var(--paper-2);
-  color: var(--graphite-soft);
+  background: var(--nb-grey);
 }
 
-/* Working: rows enter one by one, spinner then a popped mark */
+/* Working: every row is listed muted from the start; one row at a time lights up,
+   a highlight sweeps across it, then its stamp presses in and the next row takes over. */
 .ap-working .ap-row {
-  animation: ap-enter 320ms ease-out var(--ap-d) both;
+  opacity: 0.45;
+  animation: ap-on 1ms linear var(--ap-a) forwards;
 }
-.ap-working .ap-spinner {
-  animation:
-    ap-spin 0.8s linear infinite,
-    ap-hide 120ms ease-out var(--ap-r) forwards;
+.ap-working .ap-tile {
+  background: var(--nb-grey);
+  animation: ap-tile-on 1ms linear var(--ap-a) forwards;
+}
+.ap-working .ap-row::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--ap-tint) 28%, white) 40%,
+    color-mix(in srgb, var(--ap-tint) 28%, white) 60%,
+    transparent 100%
+  );
+  background-size: 250% 100%;
+  background-repeat: no-repeat;
+  animation: ap-sweep var(--ap-slot) linear var(--ap-a) forwards;
+}
+.ap-working .ap-pulse {
+  animation: ap-window var(--ap-slot) linear var(--ap-a) forwards;
+}
+.ap-working .ap-pulse::after {
+  animation: ap-beat 420ms ease-in-out var(--ap-a) infinite;
 }
 .ap-working .ap-mark {
-  animation: ap-pop 380ms cubic-bezier(0.34, 1.56, 0.64, 1) var(--ap-r) both;
+  animation: ap-stamp 180ms ease-out var(--ap-r) both;
 }
 .ap-working .ap-result {
-  animation: ap-fade 260ms ease-out var(--ap-r) both;
+  animation: ap-fade 200ms ease-out var(--ap-r) both;
 }
 
-/* Summary column */
+/* Summary column: short summary, details behind a button */
 .ap-side-note {
   margin: 4px 0 0;
   font-size: 15px;
-  line-height: 1.5;
+  font-weight: 600;
+  line-height: 1.45;
   color: var(--graphite-soft);
 }
 
 .ap-summary-block {
-  animation: ap-fade 400ms ease-out both;
+  animation: ap-fade 300ms ease-out both;
 }
 .ap-summary {
   margin: 0;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--graphite);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--nb-ink);
 }
 
 .ap-toggle {
-  margin-top: 14px;
-  padding: 0;
-  border: 0;
-  background: none;
+  margin-top: 16px;
+  padding: 7px 14px;
+  border: 2px solid var(--nb-ink);
+  border-radius: 3px;
+  background: #ffd84d;
+  box-shadow: 3px 3px 0 var(--nb-ink);
   font: inherit;
   font-size: 14px;
-  font-weight: 600;
-  color: var(--red-deep);
+  font-weight: 800;
+  color: var(--nb-ink);
   cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  transition: transform 80ms ease, box-shadow 80ms ease;
 }
 .ap-toggle:hover {
-  color: var(--red);
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--nb-ink);
+}
+.ap-toggle:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 var(--nb-ink);
 }
 .ap-toggle:focus-visible,
 .ap-chip:focus-visible {
-  outline: 2px solid var(--red);
-  outline-offset: 2px;
+  outline: 3px solid var(--red);
+  outline-offset: 3px;
 }
 
 .ap-bullets {
-  margin: 12px 0 0;
-  padding-left: 18px;
+  margin: 14px 0 0;
+  padding: 12px 14px 12px 30px;
+  border: 2px solid var(--nb-ink);
+  border-radius: 3px;
+  background: var(--nb-grey);
   font-size: 14px;
-  line-height: 1.55;
-  color: var(--graphite);
+  line-height: 1.5;
+  color: var(--nb-ink);
 }
 .ap-bullets li + li {
   margin-top: 6px;
@@ -298,23 +381,29 @@
   margin-top: 18px;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 .ap-chip {
   display: inline-block;
-  padding: 6px 12px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--paper);
+  padding: 5px 11px;
+  border: 2px solid var(--nb-ink);
+  border-radius: 3px;
+  background: #fff;
+  box-shadow: 2px 2px 0 var(--nb-ink);
   font-size: 13px;
-  font-weight: 600;
-  color: var(--red-deep);
+  font-weight: 700;
+  color: var(--nb-ink);
   text-decoration: none;
-  transition: border-color 150ms, background 150ms;
+  transition: transform 80ms ease, box-shadow 80ms ease, background 120ms;
 }
 .ap-chip:hover {
-  border-color: var(--red);
-  background: var(--paper-2);
+  background: color-mix(in srgb, var(--ap-tint) 18%, white);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--nb-ink);
+}
+.ap-chip:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--nb-ink);
 }
 
 @media (max-width: 1080px) {
@@ -328,18 +417,30 @@
   from { width: 0; }
   to { width: 100%; }
 }
-@keyframes ap-enter {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: none; }
+@keyframes ap-on {
+  to { opacity: 1; }
 }
-@keyframes ap-spin {
-  to { transform: rotate(360deg); }
+@keyframes ap-tile-on {
+  to { background: color-mix(in srgb, var(--ap-tint) 22%, white); }
 }
-@keyframes ap-hide {
-  to { opacity: 0; visibility: hidden; }
+/* the highlight crosses the row once during its slot, then clears */
+@keyframes ap-sweep {
+  0% { opacity: 1; background-position: 100% 0; }
+  92% { opacity: 1; background-position: 0% 0; }
+  100% { opacity: 0; background-position: 0% 0; }
 }
-@keyframes ap-pop {
-  0% { opacity: 0; transform: scale(0.4); }
+@keyframes ap-window {
+  0%, 99% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes ap-beat {
+  0%, 100% { transform: scale(0.7); }
+  50% { transform: scale(1.15); }
+}
+/* the stamp presses down: lands big, settles to size */
+@keyframes ap-stamp {
+  0% { opacity: 0; transform: scale(1.25); }
+  35% { opacity: 1; transform: scale(1.25); }
   100% { opacity: 1; transform: scale(1); }
 }
 @keyframes ap-fade {
@@ -349,14 +450,25 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ap-panel *,
-  .ap-panel *::before {
+  .ap-panel *::before,
+  .ap-panel *::after {
     animation: none !important;
     transition: none !important;
   }
-  .ap-working .ap-spinner {
+  .ap-working .ap-row {
+    opacity: 1;
+  }
+  .ap-working .ap-pulse,
+  .ap-working .ap-row::before {
     display: none;
   }
   .ap-working .ap-progress-fill {
     width: 100%;
+  }
+  .ap-toggle:hover,
+  .ap-toggle:active,
+  .ap-chip:hover,
+  .ap-chip:active {
+    transform: none;
   }
 }

@@ -37,8 +37,9 @@ type IconName =
   | "building";
 type Row = { icon: IconName; label: string; result: string; mark: Mark };
 
-// Time between the spinner appearing on a row and its final mark popping in.
-const RESOLVE_MS = 450;
+// The rows share one clock: each gets an equal slot of the agent's turn, and one row at a time
+// is active (sweep + pulse) until its stamp lands and the next row takes over.
+const RUN_MS = AGENT_MS - 300;
 
 function clip(text: string, max = 48): string {
   return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;
@@ -276,9 +277,9 @@ function Summary({ step }: { step: AgentStep }) {
 
 const PILL: Record<PanelState, string> = {
   queued: "Waiting",
-  working: "Working…",
+  working: "Working",
   done: "Done",
-  gap: "Some layers did not answer",
+  gap: "Gaps",
 };
 
 export function AgentPanel({ run, shown, selected }: { run: RunRecord; shown: number; selected: AgentId }) {
@@ -290,24 +291,28 @@ export function AgentPanel({ run, shown, selected }: { run: RunRecord; shown: nu
     index < shown ? (step?.status === "gap" ? "gap" : "done") : index === shown ? "working" : "queued";
 
   const rows = buildRows(run, selected);
-  // Spread the rows evenly across the agent's turn, leaving room for the last mark to land.
-  const gap = rows.length > 1 ? (AGENT_MS - 400 - RESOLVE_MS) / (rows.length - 1) : 0;
+  const slot = Math.round(RUN_MS / Math.max(rows.length, 1));
   const finished = state === "done" || state === "gap";
 
   const panelStyle = {
     "--ap-tint": agent.color,
-    "--ap-run": `${AGENT_MS - 400}ms`,
+    "--ap-run": `${slot * rows.length}ms`,
+    "--ap-slot": `${slot}ms`,
   } as CSSProperties;
 
   return (
     <section className={`ap-panel ap-${state}`} style={panelStyle} aria-live="polite">
       <header className="ap-head">
-        <img className="ap-avatar" src={agent.art} alt="" width={64} height={64} />
+        <span className="ap-avatar">
+          <img src={agent.art} alt="" width={64} height={64} />
+        </span>
         <div className="ap-who">
           <h3 className="ap-name">{agent.name}</h3>
           <p className="ap-role">{agent.role}</p>
         </div>
-        <span className={`ap-pill ap-pill-${state}`}>{PILL[state]}</span>
+        <span className={`ap-pill ap-pill-${state}`} title={state === "gap" ? "Some layers did not answer" : undefined}>
+          {PILL[state]}
+        </span>
       </header>
 
       <div className="ap-progress" aria-hidden="true">
@@ -322,7 +327,7 @@ export function AgentPanel({ run, shown, selected }: { run: RunRecord; shown: nu
               <li
                 key={`${row.label}-${i}`}
                 className={`ap-row ap-row-${row.mark}`}
-                style={{ "--ap-d": `${Math.round(i * gap)}ms`, "--ap-r": `${Math.round(i * gap) + RESOLVE_MS}ms` } as CSSProperties}
+                style={{ "--ap-a": `${i * slot}ms`, "--ap-r": `${(i + 1) * slot}ms` } as CSSProperties}
               >
                 <span className="ap-tile">
                   <Icon name={row.icon} />
@@ -333,7 +338,7 @@ export function AgentPanel({ run, shown, selected }: { run: RunRecord; shown: nu
                 </span>
                 {state !== "queued" && (
                   <span className="ap-status">
-                    {state === "working" && <span className="ap-spinner" aria-hidden="true" />}
+                    {state === "working" && <span className="ap-pulse" aria-hidden="true" />}
                     <MarkIcon mark={row.mark} />
                   </span>
                 )}
@@ -348,8 +353,8 @@ export function AgentPanel({ run, shown, selected }: { run: RunRecord; shown: nu
           ) : (
             <p className="ap-side-note">
               {state === "working"
-                ? `${agent.name} is checking the city's records for this lot.`
-                : `${agent.name} starts once the agents before it finish.`}
+                ? `Checking the city's records…`
+                : `Starts after the agents before it.`}
             </p>
           )}
         </aside>

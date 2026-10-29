@@ -1,18 +1,18 @@
 "use client";
 
+import type { SceneView } from "@/components/StreetScene";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
-const MapDesk = dynamic(() => import("@/components/MapDesk"), {
-  ssr: false,
-  loading: () => <div className="boot">Loading the map…</div>,
-});
+const MapDesk = dynamic(() => import("@/components/MapDesk"), { ssr: false });
+const StreetScene = dynamic(() => import("@/components/StreetScene"), { ssr: false });
 
-const SiteCanvas = dynamic(() => import("@/components/SiteScene"), {
-  ssr: false,
-  loading: () => <div className="boot">Raising the site…</div>,
-});
+// Scrolling down (wheel, swipe, keys) or pressing the hero button flies the street camera to a
+// top-down view, then the satellite map fades in over it and pulls out from the lot to Austin.
+// Timings line up with the 2s camera flight in StreetScene.
+const FADE_AT = 1500;
+const REVEAL_AT = 2400;
 
 const MENUS = [
   { label: "About us", body: "Austin site research before the lot is under contract." },
@@ -21,53 +21,60 @@ const MENUS = [
   { label: "Sustainability", body: "Floodplain, creek, and pipeline reads stay attached to the spot." },
 ];
 
+// ?hero=a (default) our copy, ?hero=b Arpit's copy and nav, ?hero=c our copy with Arpit's nav.
+type Hero = "a" | "b" | "c";
+
 export default function Landing() {
   const params = useSearchParams();
   const jump = Boolean(params.get("prompt") || params.get("spot"));
-  const rootRef = useRef<HTMLDivElement>(null);
-  const [reduce, setReduce] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const raw = params.get("hero");
+  const hero: Hero = raw === "b" || raw === "c" ? raw : "a";
+
+  const [view, setView] = useState<SceneView>("street");
+  const [mapShown, setMapShown] = useState(false);
+  const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const apply = () => setReduce(media.matches);
-    apply();
-    media.addEventListener("change", apply);
-    return () => media.removeEventListener("change", apply);
-  }, []);
-
-  useEffect(() => {
-    if (reduce || jump) return;
-    const root = rootRef.current;
-    if (!root) return;
-    let frame = 0;
-    const update = () => {
-      const total = root.offsetHeight - window.innerHeight;
-      const next = total <= 0 ? 1 : Math.min(1, Math.max(0, window.scrollY / total));
-      setProgress(next);
+    if (jump || view !== "street") return;
+    const go = () => setView("map");
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaY > 8) go();
     };
-    const onScroll = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(update);
+    let touchY: number | null = null;
+    const onTouchStart = (e: TouchEvent) => (touchY = e.touches[0].clientY);
+    const onTouchMove = (e: TouchEvent) => {
+      if (touchY !== null && touchY - e.touches[0].clientY > 40) go();
     };
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (["ArrowDown", "PageDown", " "].includes(e.key)) go();
+    };
+    window.addEventListener("wheel", onWheel, { passive: true });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    window.addEventListener("keydown", onKey);
     return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("keydown", onKey);
     };
-  }, [reduce, jump]);
+  }, [jump, view]);
 
-  function enterMap() {
-    const root = rootRef.current;
-    if (!root) {
-      document.getElementById("desk")?.scrollIntoView({ behavior: "smooth" });
+  useEffect(() => {
+    if (view !== "map") {
+      setMapShown(false);
+      setRevealed(false);
       return;
     }
-    window.scrollTo({ top: root.offsetHeight, behavior: "smooth" });
-  }
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const fade = window.setTimeout(() => setMapShown(true), reduce ? 0 : FADE_AT);
+    const reveal = window.setTimeout(() => setRevealed(true), reduce ? 0 : REVEAL_AT);
+    return () => {
+      window.clearTimeout(fade);
+      window.clearTimeout(reveal);
+    };
+  }, [view]);
 
   if (jump) {
     return (
@@ -77,102 +84,103 @@ export default function Landing() {
     );
   }
 
-  if (reduce) {
-    return (
-      <>
-        <section className="hero-stage is-flat">
-          <SiteCanvas progress={0} />
-          <HeroChrome onEnter={enterMap} chrome={1} title={1} />
-        </section>
-        <div id="desk" className="flat-map">
-          <MapDesk />
-        </div>
-      </>
-    );
-  }
-
-  const heroOpacity = progress < 0.46 ? 1 : Math.max(0, 1 - (progress - 0.46) / 0.24);
-  const chrome = progress < 0.08 ? 1 : Math.max(0, 1 - (progress - 0.08) / 0.16);
-  const title = progress < 0.14 ? 1 : Math.max(0, 1 - (progress - 0.14) / 0.18);
-  const rails = progress < 0.5 ? 1 : Math.max(0, 1 - (progress - 0.5) / 0.16);
-  const mapOpacity = progress < 0.4 ? 0 : Math.min(1, (progress - 0.4) / 0.26);
-  const revealed = progress >= 0.72;
-  const panel = progress < 0.56 ? 0 : Math.min(1, (progress - 0.56) / 0.16);
-  const titleScale = 1 + Math.min(progress, 0.28) * 1.4;
+  const onMap = view === "map";
+  const enter = () => setView("map");
 
   return (
-    <div className="story-root" ref={rootRef}>
-      <div className="story-sticky">
-        <div className="map-layer" style={{ opacity: mapOpacity }}>
-          <MapDesk story={{ blur: 0, dim: 1, revealed, progress, panel }} />
-        </div>
-        <div
-          className="hero-stage"
-          style={{
-            opacity: heroOpacity,
-            visibility: heroOpacity < 0.04 ? "hidden" : "visible",
-            pointerEvents: heroOpacity > 0.2 ? "auto" : "none",
-          }}
-          aria-hidden={heroOpacity < 0.05}
-        >
-          <SiteCanvas progress={progress} />
-          <HeroChrome onEnter={enterMap} chrome={chrome} title={title} titleScale={titleScale} rails={rails} />
-        </div>
+    <main className="land sky">
+      <div className="land-layer">
+        <StreetScene view={view} paused={revealed} />
       </div>
-    </div>
+
+      <div className={`land-scrim${onMap ? " is-off" : ""}`} aria-hidden="true" />
+
+      {hero === "a" ? (
+        <header className={`land-head${onMap ? " is-off" : ""}`}>
+          <span className="wordmark display">Construction</span>
+          <span className="land-place">Austin, Texas</span>
+        </header>
+      ) : (
+        <ArpitNav onEnter={enter} hidden={onMap} />
+      )}
+
+      <section className={`land-hero${onMap ? " is-off" : ""}`} aria-hidden={onMap}>
+        {hero === "b" ? (
+          <>
+            <h1 className="land-title is-shout">
+              Building your
+              <br />
+              vision into
+              <br />
+              reality.
+            </h1>
+            <button type="button" className="btn-red land-cta" onClick={enter} tabIndex={onMap ? -1 : 0}>
+              Learn more
+              <Arrow />
+            </button>
+          </>
+        ) : (
+          <>
+            <h1 className="land-title display">What can you build on your lot?</h1>
+            <p className="land-lede">
+              Enter an Austin address. See the zoning, permits and hazards, each with its source, a rough cost, and who
+              to call next.
+            </p>
+            <button type="button" className="btn-red land-cta" onClick={enter} tabIndex={onMap ? -1 : 0}>
+              Begin building
+              <Arrow />
+            </button>
+          </>
+        )}
+      </section>
+
+      <div className={`land-hint${onMap ? " is-off" : ""}`} aria-hidden="true">
+        Scroll to find your lot
+        <svg width="18" height="18" viewBox="0 0 18 18">
+          <path d="M4 7l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+
+      <div
+        className={`land-map${mapShown ? " is-on" : ""}`}
+        aria-hidden={!revealed}
+        inert={!revealed ? true : undefined}
+      >
+        <MapDesk
+          story={{ blur: 0, dim: 1, revealed, progress: mapShown ? 1 : 0, panel: revealed ? 1 : 0 }}
+          onHome={() => setView("street")}
+        />
+      </div>
+    </main>
   );
 }
 
-function HeroChrome({
-  onEnter,
-  chrome,
-  title,
-  titleScale = 1,
-  rails = 1,
-}: {
-  onEnter: () => void;
-  chrome: number;
-  title: number;
-  titleScale?: number;
-  rails?: number;
-}) {
+function ArpitNav({ onEnter, hidden }: { onEnter: () => void; hidden: boolean }) {
   return (
-    <>
-      <header className="hero-nav" style={{ opacity: chrome }}>
-        <a className="hero-logo" href="/" aria-label="Construction">
-          <HardHat />
-        </a>
-        <nav className="hero-links" aria-label="Primary">
-          {MENUS.map((item) => (
-            <details key={item.label} className="hero-menu">
-              <summary>{item.label}</summary>
-              <p>{item.body}</p>
-            </details>
-          ))}
-          <button type="button" className="hero-search" aria-label="Search the map" onClick={onEnter}>
-            <SearchIcon />
-          </button>
-        </nav>
-      </header>
-      <div className="hero-copy" style={{ opacity: title, transform: `scale(${titleScale})` }}>
-        <h1>
-          Building your
-          <br />
-          vision into
-          <br />
-          reality.
-        </h1>
-        <button type="button" className="hero-learn" onClick={onEnter}>
-          Learn more
+    <header className={`land-head hero-nav-light${hidden ? " is-off" : ""}`}>
+      <span className="hero-logo" aria-label="Construction">
+        <HardHat />
+      </span>
+      <nav className="hero-links" aria-label="Primary">
+        {MENUS.map((item) => (
+          <details key={item.label} className="hero-menu">
+            <summary>{item.label}</summary>
+            <p>{item.body}</p>
+          </details>
+        ))}
+        <button type="button" className="hero-search" aria-label="Search the map" onClick={onEnter}>
+          <SearchIcon />
         </button>
-      </div>
-      <p className="scroll-rail left" style={{ opacity: rails }}>
-        Scroll down
-      </p>
-      <p className="scroll-rail right" style={{ opacity: rails }}>
-        Scroll down
-      </p>
-    </>
+      </nav>
+    </header>
+  );
+}
+
+function Arrow() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+      <path d="M3 9h11M10 4l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 

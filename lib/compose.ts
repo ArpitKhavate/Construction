@@ -1,4 +1,5 @@
 import { applyFeedback, constraintsChanged, parseConstraints } from "@/lib/constraints";
+import { readAddress } from "@/lib/address";
 import { loadAnchorFacts, readField } from "@/lib/gis";
 import { annotateSpot, rankSpots } from "@/lib/rank";
 import { buildCall, buildChecklist, buildEmail, buildSteps } from "@/lib/report";
@@ -53,6 +54,12 @@ export async function researchSpot(prompt: string, spotId: string) {
   return buildRun({ prompt, constraints, spot });
 }
 
+export async function researchAddress(prompt: string, address: string) {
+  const constraints = parseConstraints(prompt);
+  const fact = await readAddress(address);
+  return buildRun({ prompt, constraints, spot: annotateSpot(fact, constraints) });
+}
+
 export async function reviseRun(run: RunRecord, feedback: string) {
   const text = feedback.trim();
   if (text.length < 2) throw new Error("Tell the agents what to change.");
@@ -73,10 +80,11 @@ export async function reviseRun(run: RunRecord, feedback: string) {
   }
   const facts = await loadAnchorFacts();
   const ranked = rankSpots(facts, constraints);
-  const current = facts.find((item) => item.id === run.spot.id);
+  // Address runs are not in the anchor set, so they re-score against the spot they already have.
+  const current = run.spot.id.startsWith("addr-") ? run.spot : facts.find((item) => item.id === run.spot.id);
   const rescored = current ? annotateSpot(current, constraints) : null;
   const stayed = Boolean(rescored && rescored.band !== "weak");
-  const pick = facts.find((item) => item.id === (stayed ? run.spot.id : ranked[0]?.id));
+  const pick = stayed ? current : facts.find((item) => item.id === ranked[0]?.id);
   if (!pick) throw new Error("Austin spots could not be ranked again.");
   const spot = annotateSpot(pick, constraints);
   const note = stayed

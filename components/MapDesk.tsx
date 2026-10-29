@@ -13,6 +13,9 @@ const EXAMPLES = [
   "12 apartments in Austin",
 ];
 
+// 3105 Cherrywood Rd. The landing flight ends over this lot, so the map starts here and pulls out to the city.
+const LOT: [number, number] = [-97.7168, 30.2862];
+
 const BAND = { strong: "Strong match", possible: "Possible", weak: "Weak match" };
 
 export type MapStory = {
@@ -30,7 +33,7 @@ type RecommendResponse = {
   error?: string;
 };
 
-export default function MapDesk({ story }: { story?: MapStory }) {
+export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: () => void }) {
   const mapNode = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MlMap | null>(null);
   const padRef = useRef<number | null>(null);
@@ -50,14 +53,17 @@ export default function MapDesk({ story }: { story?: MapStory }) {
   const [researching, setResearching] = useState(false);
   const [ready, setReady] = useState(false);
   const auto = useRef(false);
+  const [mode, setMode] = useState<"idea" | "address">("idea");
+  const [address, setAddress] = useState("3105 Cherrywood Rd, Austin, TX 78722");
+  const [addressIdea, setAddressIdea] = useState("A backyard ADU (small second home) to rent out");
 
   useEffect(() => {
     if (!mapNode.current || mapRef.current) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const map = new maplibregl.Map({
       container: mapNode.current,
-      center: [-98.6, 39.5],
-      zoom: 3.5,
+      center: story ? LOT : [-98.6, 39.5],
+      zoom: story ? 17 : 3.5,
       minZoom: 2.5,
       maxZoom: 18,
       attributionControl: { compact: true },
@@ -250,6 +256,28 @@ export default function MapDesk({ story }: { story?: MapStory }) {
     }
   }
 
+  async function researchAddress() {
+    if (address.trim().length < 5 || addressIdea.trim().length < 3) {
+      setError("Add the address and what you want to build.");
+      return;
+    }
+    setResearching(true);
+    setError("");
+    try {
+      const response = await fetch("/api/runs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: addressIdea, address }),
+      });
+      const data = (await response.json()) as { id?: string; error?: string };
+      if (!response.ok || !data.id) throw new Error(data.error || "Research could not start.");
+      router.push(`/runs/${data.id}`);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Research could not start.");
+      setResearching(false);
+    }
+  }
+
   async function research() {
     if (!selected) return;
     setResearching(true);
@@ -289,13 +317,55 @@ export default function MapDesk({ story }: { story?: MapStory }) {
         style={story ? { opacity: story.panel, pointerEvents: story.revealed ? "auto" : "none" } : undefined}
         inert={story && !story.revealed ? true : undefined}
       >
-        <a className="brand" href="/">
+        <a
+          className="brand"
+          href="/"
+          onClick={(event) => {
+            if (!onHome) return;
+            event.preventDefault();
+            onHome();
+          }}
+        >
           <span className="brand-mark">C</span>
           <span>
             <strong>Construction</strong>
             <small>Austin site research</small>
           </span>
         </a>
+        <div className="tabs" role="tablist" aria-label="How to search">
+          <button type="button" role="tab" aria-selected={mode === "idea"} className={mode === "idea" ? "tab on" : "tab"} onClick={() => setMode("idea")}>
+            Describe it
+          </button>
+          <button type="button" role="tab" aria-selected={mode === "address"} className={mode === "address" ? "tab on" : "tab"} onClick={() => setMode("address")}>
+            I have an address
+          </button>
+        </div>
+        {mode === "address" ? (
+          <form
+            className="stack"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void researchAddress();
+            }}
+          >
+            <div>
+              <label htmlFor="address">Address</label>
+              <input id="address" type="text" value={address} onChange={(event) => setAddress(event.target.value)} placeholder="3105 Cherrywood Rd, Austin, TX" />
+            </div>
+            <div>
+              <label htmlFor="address-idea">What do you want to build?</label>
+              <textarea id="address-idea" value={addressIdea} onChange={(event) => setAddressIdea(event.target.value)} />
+            </div>
+            <button className="btn full" type="submit" disabled={researching}>
+              {researching ? "Running the five agents…" : "Research this address"}
+            </button>
+            {error ? <p className="error">{error}</p> : null}
+            <p className="fine">
+              We match the address to its county parcel, then read zoning, flood, permits and the Austin process at that lot.
+            </p>
+          </form>
+        ) : (
+        <>
         <form
           className="stack"
           onSubmit={(event) => {
@@ -364,6 +434,8 @@ export default function MapDesk({ story }: { story?: MapStory }) {
             address layer. Sale prices are not part of this pass.
           </p>
         </div>
+        </>
+        )}
       </aside>
     </main>
   );

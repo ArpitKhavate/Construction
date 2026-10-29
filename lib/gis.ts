@@ -170,7 +170,7 @@ async function readPermits(lng: number, lat: number): Promise<PermitHit[]> {
     .slice(0, 4);
 }
 
-async function readAnchor(seed: (typeof ANCHORS)[number]): Promise<AnchorFact | null> {
+export async function readAnchor(seed: (typeof ANCHORS)[number]): Promise<AnchorFact | null> {
   const [zoningResult, fema, coaFlood, addressResult] = await Promise.all([
     readZoning(seed.lng, seed.lat).catch(() => null),
     layerCheck("Shared/Floodplain", 1, seed.lng, seed.lat),
@@ -238,7 +238,8 @@ export async function readField(fact: AnchorFact): Promise<FieldReport> {
   return {
     zoning: zoningResult?.zoning ?? fact.zoning,
     zoningBase: zoningResult?.zoningBase ?? fact.zoningBase,
-    address: address ?? fact.address,
+    // An address search keeps the address the person typed, not the nearest city address point.
+    address: fact.id.startsWith("addr-") ? fact.address : (address ?? fact.address),
     fema,
     coaFlood,
     nearFlood,

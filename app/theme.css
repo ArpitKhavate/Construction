@@ -1,0 +1,351 @@
+/*
+  Fawaz's look layered over Arpit's globals.css: daylight sky, graphite ink, one burnt-red action
+  color, condensed Archivo for display type. globals.css keeps the structure; this file only
+  remaps its tokens and restyles surfaces, so either file can change without merge conflicts.
+*/
+:root {
+  --graphite: #34342f;
+  --graphite-soft: #5d5a4c;
+  --red: #c2541f;
+  --red-deep: #a2441a;
+  --sky-top: #a9d8f0;
+  --sky-mid: #cbe8f5;
+  --sky-low: #e7f2f6;
+
+  --ink: var(--graphite);
+  --muted: var(--graphite-soft);
+  --paper: #ffffff;
+  --paper-2: #f1f6f8;
+  --line: #dde5e8;
+  --field: #b9c3c7;
+  --copper: var(--red);
+  --copper-deep: var(--red-deep);
+  --good: #1f6b43;
+  --good-bg: #e3f2e8;
+  --warn: #7a5410;
+  --warn-bg: #fbf0d6;
+  --weak: #8a3324;
+  --weak-bg: #fbe7e1;
+  --serif: var(--font-archivo), "Segoe UI", sans-serif;
+  --sans: var(--font-archivo), "Segoe UI", sans-serif;
+  --shadow-card: 0 1px 2px rgb(52 52 47 / 0.06), 0 12px 32px -18px rgb(52 52 47 / 0.35);
+  --shadow-float: 0 2px 4px rgb(52 52 47 / 0.08), 0 24px 60px -20px rgb(52 52 47 / 0.45);
+}
+
+body {
+  background: var(--sky-low);
+  -webkit-font-smoothing: antialiased;
+}
+
+.display,
+.lede h1,
+.card h2,
+.paper h3,
+.brand strong,
+.banner strong,
+.boot {
+  font-family: var(--serif);
+  font-variation-settings: "wdth" 72;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.sky {
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 45%, var(--sky-low) 70%, var(--sky-low) 100%);
+}
+
+.boot {
+  min-height: 100vh;
+  color: var(--graphite);
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-low) 70%);
+}
+
+/* ---------- Landing ---------- */
+
+.land {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+.land-layer { position: absolute; inset: 0; }
+
+.is-off {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.land-scrim {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 62%;
+  pointer-events: none;
+  background: radial-gradient(60% 55% at 0% 25%, rgb(203 232 245 / 0.92) 0%, rgb(203 232 245 / 0.75) 45%, rgb(203 232 245 / 0) 100%);
+  transition: opacity 500ms ease;
+}
+
+.land-head {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 32px 40px 0;
+  color: var(--graphite);
+  transition: opacity 400ms ease;
+}
+.wordmark {
+  font-size: 20px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.land-place {
+  padding-top: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--graphite-soft);
+}
+
+/* Arpit's nav, recolored for a light sky. */
+.hero-nav-light { align-items: center; padding-top: 24px; }
+.hero-nav-light .hero-logo,
+.hero-nav-light .hero-search { color: var(--graphite); }
+.hero-nav-light .hero-menu summary { color: var(--graphite); }
+.hero-nav-light .hero-menu p {
+  background: rgb(255 255 255 / 0.96);
+  color: var(--graphite);
+  box-shadow: var(--shadow-card);
+}
+
+.land-hero {
+  position: relative;
+  z-index: 3;
+  padding: 48px 40px 0;
+  transition: opacity 500ms ease, transform 500ms ease;
+}
+.land-hero.is-off { transform: translateY(-24px); }
+.land-title {
+  max-width: 14ch;
+  margin: 0;
+  font-size: clamp(2.6rem, 6.4vw, 5.25rem);
+  line-height: 0.92;
+  color: var(--graphite);
+  text-wrap: balance;
+}
+.land-title.is-shout {
+  max-width: none;
+  font-family: var(--serif);
+  font-variation-settings: "wdth" 72;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+.land-lede {
+  max-width: 28rem;
+  margin: 16px 0 0;
+  font-size: 20px;
+  line-height: 1.35;
+  color: var(--graphite);
+}
+.land-cta {
+  margin-top: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 28px;
+  border: 0;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.btn-red {
+  background: var(--red);
+  color: #fff8ef;
+  box-shadow: 0 1px 0 rgb(0 0 0 / 0.08), 0 8px 18px -8px rgb(162 68 26 / 0.55);
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1), transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-red:hover { background: var(--red-deep); }
+.btn-red:active { transform: translateY(1px); }
+.btn-red:focus-visible { outline: 2px solid var(--graphite); outline-offset: 3px; }
+
+.land-hint {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--graphite);
+  opacity: 0.9;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+
+.land-map {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 900ms ease;
+}
+.land-map.is-on { opacity: 1; }
+.land-map.is-on:not([inert]) { pointer-events: auto; }
+.land-map .map-screen { height: 100%; }
+
+/* ---------- Map panel ---------- */
+
+.panel {
+  background: rgb(255 255 255 / 0.92);
+  backdrop-filter: blur(12px);
+  border: 0;
+  border-radius: 16px;
+  box-shadow: var(--shadow-float);
+  padding: 24px;
+  transition: opacity 500ms ease;
+}
+.brand { margin-bottom: 8px; }
+.brand-mark {
+  background: var(--red);
+  color: #fff8ef;
+  border-radius: 10px;
+  font-family: var(--serif);
+  font-variation-settings: "wdth" 72;
+  font-weight: 800;
+}
+.brand strong { font-size: 24px; text-transform: uppercase; letter-spacing: 0.01em; }
+.brand small { font-size: 13px; }
+
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 10px;
+  background: var(--paper-2);
+  margin-bottom: 4px;
+}
+.tab {
+  min-height: 40px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--graphite-soft);
+  font-weight: 600;
+  font-size: 15px;
+}
+.tab.on {
+  background: white;
+  color: var(--graphite);
+  box-shadow: 0 1px 2px rgb(52 52 47 / 0.12), 0 4px 10px -6px rgb(52 52 47 / 0.3);
+}
+
+label { font-size: 14px; font-weight: 600; color: var(--graphite-soft); margin-bottom: 6px; }
+textarea,
+input[type="text"],
+input[type="email"],
+input[type="tel"] {
+  border: 1px solid var(--field);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+textarea:focus-visible,
+input[type="text"]:focus-visible,
+input[type="email"]:focus-visible,
+input[type="tel"]:focus-visible {
+  outline: none;
+  border-color: var(--graphite);
+  box-shadow: 0 0 0 3px rgb(52 52 47 / 0.14);
+}
+textarea { min-height: 84px; }
+
+.btn {
+  border-radius: 8px;
+  font-weight: 600;
+  box-shadow: 0 1px 0 rgb(0 0 0 / 0.08), 0 8px 18px -8px rgb(162 68 26 / 0.55);
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn.secondary { box-shadow: none; border-color: var(--field); }
+
+.chip,
+.examples button {
+  border-color: var(--line);
+  font-size: 14px;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+.examples button:hover { border-color: var(--graphite); }
+
+.spot {
+  border-radius: 12px;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+.spot:hover { border-color: var(--field); }
+.spot.on {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgb(194 84 31 / 0.16);
+}
+
+.city-pin, .bubble { box-shadow: 0 2px 4px rgb(0 0 0 / 0.12), 0 12px 28px -10px rgb(0 0 0 / 0.45); }
+.city-pin { font-weight: 700; }
+.city-pin.live { background: var(--red); }
+.bubble { border-radius: 12px; }
+.bubble.on { outline-color: var(--red); }
+
+/* ---------- Results ---------- */
+
+.run {
+  background: linear-gradient(180deg, var(--sky-top) 0px, var(--sky-mid) 220px, var(--sky-low) 420px, var(--sky-low) 100%);
+}
+.run-bar {
+  background: rgb(255 255 255 / 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 0;
+  box-shadow: 0 1px 0 rgb(52 52 47 / 0.06);
+  padding: 14px 40px;
+}
+.run-bar a:first-child {
+  font-family: var(--serif);
+  font-variation-settings: "wdth" 72;
+  font-weight: 800;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.run-bar a:last-child {
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--red-deep);
+}
+.run-wrap { padding-top: 40px; }
+.lede h1 { font-size: clamp(40px, 5.6vw, 72px); line-height: 0.92; margin-bottom: 12px; }
+.lede > p:last-child { font-size: 19px; max-width: 46rem; }
+.kicker { color: var(--red-deep); letter-spacing: 0.1em; }
+
+.card {
+  border: 0;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+}
+.card h2 { font-size: 34px; line-height: 1; margin-bottom: 10px; }
+.agent, .check { border-color: var(--line); border-radius: 12px; }
+.agent.gap { background: var(--warn-bg); border-color: transparent; }
+.agent h3, .check h3 { font-weight: 700; }
+.num { background: var(--red); }
+.why { background: var(--paper-2); }
+.banner { border-radius: 12px; box-shadow: var(--shadow-card); }
+.paper { border-radius: 12px; }
+.slider { border-radius: 12px; }

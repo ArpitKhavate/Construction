@@ -16,10 +16,14 @@ First-time builders, such as someone adding a backyard home (ADU) or building a 
    - **Stamp:** permit history nearby.
    - **Foreman:** the filing path for the size of project.
    - **Fern:** creeks, trees and water quality.
+
+   While the research runs, the crew's sheet over the map lists the layers each agent is reading.
 4. **Results.**
-   - A beginner checklist where each step says why it's there and links to the city source.
+   - The crew in a row. Under it, one panel shows the selected agent's checklist of the map layers it read and what each returned (for example "FEMA flood zone → Clear ✓"), ticking row by row, then its summary, details and source links. Click any character to see its work, or **Skip the replay** to jump to the end.
+   - A beginner checklist as an accordion: click a step to see what to do, why it's there, and the city source.
+   - Local builders as tiles with star ratings.
    - **Push back:** say "only 3 homes" or "avoid the floodplain" and the research is redone.
-   - An aerial image of the lot with the building's footprint drawn on, for the AutoHDR track.
+   - The aerial image section is hidden for now while a teammate builds a render that places a house on the lot. The current pipeline is still in `lib/render.ts`.
    - Pre-filled City of Austin permit forms to download.
    - An email and a phone call that are only sent or placed after you approve them.
 
@@ -62,9 +66,10 @@ Research works with no keys. With `ANTHROPIC_API_KEY`, the five agents write wit
 | Satellite map and aerial imagery | **Live.** Esri World Imagery tiles. |
 | Candidate spots for "Describe it" | **Fixed set.** 16 points across Austin neighborhoods (`lib/anchors.ts`), each with a live zoning and flood reading that is cached for 6 hours. Not every parcel. |
 | Agent write-ups (the text on each agent card) | **Live Claude Haiku 5.5**, one call per agent, in parallel (`lib/agents.ts`). Each agent sees only its slice of the live facts and must reply in a fixed JSON format. Source links come from code, not the model. If a call fails or times out (12s), that agent falls back to the rule-written text (`lib/report.ts`). |
+| Agent activity animation | **Replay** of the real lookups and results after the run finishes (about 2.5s per agent). Not streamed live. |
 | Checklist | **Written by rules** from the live facts and the current Austin Development Services process pages. |
 | Builder contacts | **Live from Apify** (Google Maps, 5 builders within 8 km of the lot). Results are cached for 24 hours. If the lookup takes longer than 5 seconds, a bundled list of real Austin ADU and home builders, gathered with Apify, is shown while the lookup finishes in the background. |
-| Aerial building footprint | **A diagram.** Real aerial tiles with tone and sharpening fixes. The roof outline is a drawn placeholder, not a design. |
+| Aerial building footprint | **Hidden for now.** In code: real aerial tiles with tone and sharpening fixes, and the roof outline is a drawn placeholder, not a design. A house-on-the-lot render is in progress. |
 | Permit forms | **Drafts filled from the research.** Nothing is submitted to the city. |
 | Email and calls | **Real sends** once keys are set, only after you tick the approval box, and only to recipients listed in `DEMO_EMAIL`, `DEMO_PHONE` or `OUTREACH_ALLOW_TO`. |
 | Sale prices and cost estimates | **Not included.** |

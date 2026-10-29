@@ -20,13 +20,16 @@ Judging: Fri 2026-10-30, 13:00–16:00, at a table with Q&A, repeated for three 
 **0:40–1:15: The crew at work**
 - Click **I have an address**, then **Research this address**.
 > "Five agents, one for each part of the city's rules: zoning, flood, permits, the filing path, and environment. These are real city map layers being read right now, not a template."
-- The results page opens and the crew reports one by one. Point at the lines:
-  - **Zoney:** "Zoned SF-3-NP"
-  - **Levee:** "No flood zone". If there's a hit, Levee's umbrella pops open.
-  - **Stamp:** "4 permits nearby"
+- While it runs, the crew's sheet over the map lists the layers each agent is reading.
+- The results page opens with the crew in a row. Point at the selected agent's checklist ticking, row by row:
+  - **Zoney:** "Austin zoning map → SF-3-NP ✓"
+  - **Stamp:** "Building permits within 220 m → 4 found"
+- Click **Levee** to show the flood checks ("FEMA flood zone → Clear ✓"). If there's a hit, Levee's umbrella pops open.
+> "This is a replay of the exact layers each agent read, and what each one returned."
+- Short on time? Click **Skip the replay**.
 
 **1:15–1:40: What you do next**
-- Scroll to the checklist and open one "Why this is on the list".
+- Scroll to the checklist and click one step to open it and see why it's there.
 > "Every step says why it's there and links to the city page it came from."
 - Click **Fill the permits** to show the pre-filled City of Austin forms.
 
@@ -36,7 +39,7 @@ Judging: Fri 2026-10-30, 13:00–16:00, at a table with Q&A, repeated for three 
 
 ## Talking points by track
 
-- **AutoHDR:** the aerial image pipeline (`lib/render.ts`) stitches the city aerial for the lot, fixes tone and color, sharpens it, and draws the building's footprint on it. There's a before/after slider on the results page.
+- **AutoHDR:** a teammate is building a render that places an actual house on the lot, so the aerial section is hidden on the results page for now. What exists in code today (`lib/render.ts`): it stitches the Esri aerial for the lot, fixes tone and color, sharpens it, and draws a roof-plate diagram of the building's footprint on it.
 - **Antler** (is this a company?):
   - The buyer is the first-time builder, and the same flow works for small developers screening lots.
   - Possible paid tiers: a "full permit packet" product, and referral fees from builders and surveyors.
@@ -49,6 +52,7 @@ Judging: Fri 2026-10-30, 13:00–16:00, at a table with Q&A, repeated for three 
   - Each must answer in a fixed JSON format. The source links come from our code, not the model, so the model can't invent a citation.
   - If a call fails or takes longer than 12 seconds, that agent falls back to rule-written text built from the same facts, so the demo never breaks.
   - Haiku can still add a small inference now and then. That's why every claim links to its source.
+- **"Is the agent animation real?"** The research itself is live. The checklist that ticks under each character is a replay, after the research finishes, of the exact layers that agent read and the real results it got. It isn't streamed live; it takes about 12 seconds, and **Skip the replay** jumps to the end.
 - **"How do you know it's right?"** Every finding links to the city layer or page it came from. The app says plainly when a layer didn't answer, and the checklist tells you to confirm the exact lot with the city and a surveyor. It is research, not a zoning determination.
 - **"Does it work for any address?"** Any address in Austin's zoning map works. Outside Austin, it says so and stops.
 - **"Where does the data come from?"**
@@ -56,7 +60,8 @@ Judging: Fri 2026-10-30, 13:00–16:00, at a table with Q&A, repeated for three 
   - Census geocoder and Travis County appraisal district parcels.
   - Esri imagery.
 - **"What's mocked?"**
-  - The building footprint on the aerial is a diagram.
+  - The agent checklists are a replay of the real lookups, not a live stream.
+  - The aerial render is hidden for now. In code, the building footprint on it is a diagram.
   - The permit forms are drafts, and nothing is submitted.
   - The "Describe it" search ranks 16 neighborhood points, not every parcel.
   - There are no prices.
@@ -79,3 +84,4 @@ Judging: Fri 2026-10-30, 13:00–16:00, at a table with Q&A, repeated for three 
 
 - **City layers are slow:** switch to the backup results tab and say "this is a run from five minutes ago, same live data."
 - **3D is slow on the judging laptop:** start from the backup tab. The results page carries the demo on its own.
+- **Replay is running long or a judge is waiting:** click **Skip the replay**, then click any character to show its checks.

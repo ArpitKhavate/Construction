@@ -45,9 +45,10 @@ Judging: Fri 2026-10-30, 13:00–16:00, at a table with Q&A, repeated for three 
 ## Likely judge questions
 
 - **"Are the agents real AI or templates?"**
-  - The facts are always live from the city's map layers.
-  - On this branch, the agent text is written by rules from those facts. The `real-agents` branch has each agent as a Claude Haiku call that is limited to the facts it's given, and falls back to the rule-written text if a call fails.
-  - Say which version you're demoing.
+  - They're real. Five Claude Haiku 5.5 calls run in parallel, and each sees only its own slice of the live city facts.
+  - Each must answer in a fixed JSON format. The source links come from our code, not the model, so the model can't invent a citation.
+  - If a call fails or takes longer than 12 seconds, that agent falls back to rule-written text built from the same facts, so the demo never breaks.
+  - Haiku can still add a small inference now and then. That's why every claim links to its source.
 - **"How do you know it's right?"** Every finding links to the city layer or page it came from. The app says plainly when a layer didn't answer, and the checklist tells you to confirm the exact lot with the city and a surveyor. It is research, not a zoning determination.
 - **"Does it work for any address?"** Any address in Austin's zoning map works. Outside Austin, it says so and stops.
 - **"Where does the data come from?"**
@@ -65,7 +66,8 @@ Judging: Fri 2026-10-30, 13:00–16:00, at a table with Q&A, repeated for three 
   - Matching an address to its parcel, because Census points land on the street center line and miss the zoning shape.
   - A camera flight that hands off from the 3D street to a real map.
   - Characters built entirely in code, with no model files.
-- **"What would you build next?"** Real lot measurements (setbacks and how much can be built), cost estimates, live builder contacts (on the `apify-builders` branch), and submitting to the city's permit system.
+- **"What would you build next?"** Real lot measurements (setbacks and how much can be built), cost estimates, a check in code that every quote really appears in its source, and submitting to the city's permit system.
+- **"Who should I call?"** The checklist ends with 5 real local builders found through Apify on Google Maps, with ratings and phone numbers. They're also added to the email draft.
 
 ## Roles
 

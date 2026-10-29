@@ -135,14 +135,26 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !ready) return;
+    // Markers and camera moves work before the style "load" event, so spots never wait on it.
+    if (!map) return;
     spotMarkers.current.forEach((marker) => marker.remove());
-    spotMarkers.current = spots.map((spot) => {
+    spotMarkers.current = spots.map((spot, index) => {
+      const on = spot.id === selected;
+      const address = spot.address ?? spot.name;
       const button = document.createElement("button");
       button.type = "button";
-      button.className = spot.id === selected ? "bubble on" : "bubble";
-      const tag = spot.caution ?? (spot.fema.state === "clear" && spot.coaFlood.state === "clear" ? "Outside floodplain" : (spot.reasons[0] ?? BAND[spot.band]));
-      button.innerHTML = `<b>${escapeHtml(spot.address ?? spot.name)}</b><span>${escapeHtml(spot.zoning ?? "Zoning missing")} · ${escapeHtml(BAND[spot.band])}</span><em>${escapeHtml(tag)}</em>`;
+      button.className = on ? "pin on" : "pin";
+      button.setAttribute("aria-label", `Spot ${index + 1}: ${address}`);
+      const num = document.createElement("span");
+      num.className = "pin-num";
+      num.textContent = String(index + 1);
+      button.append(num);
+      if (on) {
+        const label = document.createElement("span");
+        label.className = "pin-label";
+        label.textContent = address;
+        button.append(label);
+      }
       button.addEventListener("click", (event) => {
         event.stopPropagation();
         setSelected(spot.id);
@@ -150,25 +162,42 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
       const marker = new maplibregl.Marker({ element: button, anchor: "bottom" })
         .setLngLat([spot.lng, spot.lat])
         .addTo(map);
-      if (spot.id === selected) marker.getElement().style.zIndex = "3";
+      marker.getElement().style.zIndex = on ? "4" : "2";
       return marker;
     });
-
-  }, [spots, selected, ready]);
+  }, [spots, selected]);
 
   const spotKey = spots.map((spot) => spot.id).join("|");
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !ready || !spots.length) return;
+    if (!map || !spots.length) return;
     const bounds = new maplibregl.LngLatBounds();
     spots.forEach((spot) => bounds.extend([spot.lng, spot.lat]));
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     map.fitBounds(bounds, {
-      padding: { top: 130, bottom: 80, left: 480, right: 90 },
+      padding: { top: 120, bottom: 90, left: 480, right: 90 },
       maxZoom: 13,
       duration: reduce ? 0 : 800,
     });
-  }, [spotKey, ready]);
+  }, [spotKey]);
+
+  // Picking a spot from the list eases the map to it. A new search fits all spots instead,
+  // and the landing flight keeps the camera until the map is revealed.
+  const easedKey = useRef(spotKey);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (easedKey.current !== spotKey) {
+      easedKey.current = spotKey;
+      return;
+    }
+    if (!map || (story && !story.revealed)) return;
+    const spot = spots.find((item) => item.id === selected);
+    if (!spot) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    map.easeTo({ center: [spot.lng, spot.lat], zoom: Math.max(map.getZoom(), 12.5), duration: reduce ? 0 : 600 });
+    // Only a new selection should move the camera.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected, spotKey]);
 
   useEffect(() => {
     if (!ready || auto.current) return;
@@ -418,19 +447,22 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
           </div>
         ) : null}
         <ol className="spot-list">
-          {spots.map((spot) => (
+          {spots.map((spot, index) => (
             <li key={spot.id}>
               <button
                 type="button"
                 className={spot.id === selected ? "spot on" : "spot"}
+                title={spot.caution ?? spot.reasons[0]}
                 onClick={() => setSelected(spot.id)}
               >
-                <b>{spot.address ?? spot.name}</b>
-                <span>
-                  {spot.name} · {spot.zoning}
+                <span className="spot-num">{index + 1}</span>
+                <span className="spot-main">
+                  <b className="spot-addr">{spot.address ?? spot.name}</b>
+                  <span className="spot-tags">
+                    <span className="tag-zone">{spot.zoning ?? "Zoning missing"}</span>
+                    <span className={`tag-band band ${spot.band}`}>{BAND[spot.band]}</span>
+                  </span>
                 </span>
-                <small>{spot.caution ?? spot.reasons[0]}</small>
-                <span className={`band ${spot.band}`}>{BAND[spot.band]}</span>
               </button>
             </li>
           ))}
@@ -449,12 +481,4 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
       </aside>
     </main>
   );
-}
-
-function escapeHtml(value: string) {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
 }

@@ -1,11 +1,15 @@
 import { applyFeedback, constraintsChanged, parseConstraints } from "@/lib/constraints";
 import { readAddress } from "@/lib/address";
+import { cachedDemo, degraded } from "@/lib/demo-cache";
 import { builderSearch, findBuilders, withBuilderEmail, withBuilderItem } from "@/lib/builders";
 import { loadAnchorFacts, readField } from "@/lib/gis";
 import { annotateSpot, rankSpots } from "@/lib/rank";
 import { runAgents } from "@/lib/agents";
 import { buildCall, buildChecklist, buildEmail } from "@/lib/report";
-import type { Constraints, RunRecord, Spot } from "@/lib/types";
+import type { Constraints, FieldReport, RunRecord, Spot } from "@/lib/types";
+
+// How long a demo address waits for live city data before using its saved reading.
+const LIVE_BUDGET_MS = 9000;
 
 export async function buildRun(input: {
   prompt: string;
@@ -16,13 +20,14 @@ export async function buildRun(input: {
   feedback?: string[];
   revision?: RunRecord["revision"];
   builders?: RunRecord["builders"];
+  field?: FieldReport;
 }): Promise<RunRecord> {
   // Builders load beside the GIS read and are capped so they never hold the run up.
   const buildersJob = input.builders
     ? Promise.resolve(input.builders)
     : findBuilders(input.constraints, input.spot).then((found) => found.builders);
   const started = Date.now();
-  const field = await readField(input.spot);
+  const field = input.field ?? (await readField(input.spot));
   const elapsed = Date.now() - started;
   const steps = await runAgents(input.spot, field, input.constraints, { prompt: input.prompt, fallbackMs: elapsed });
   const now = new Date().toISOString();
@@ -59,8 +64,21 @@ export async function researchSpot(prompt: string, spotId: string) {
 
 export async function researchAddress(prompt: string, address: string) {
   const constraints = parseConstraints(prompt);
-  const fact = await readAddress(address);
-  return buildRun({ prompt, constraints, spot: annotateSpot(fact, constraints) });
+  const demo = cachedDemo(address);
+  if (!demo) {
+    const fact = await readAddress(address);
+    return buildRun({ prompt, constraints, spot: annotateSpot(fact, constraints) });
+  }
+  // Demo addresses try live first, then fall back to the saved reading if the city servers are slow or down.
+  const live = (async () => {
+    const fact = await readAddress(address);
+    return { fact, field: await readField(fact) };
+  })().catch(() => null);
+  const late = new Promise<null>((resolve) => setTimeout(() => resolve(null), LIVE_BUDGET_MS));
+  const got = await Promise.race([live, late]);
+  const use = got && !degraded(got.field) ? got : demo;
+  if (use === demo) console.warn(`[demo-cache] using the saved city reading for ${address}`);
+  return buildRun({ prompt, constraints, spot: annotateSpot(use.fact, constraints), field: use.field });
 }
 
 export async function reviseRun(run: RunRecord, feedback: string) {
@@ -108,6 +126,7 @@ export async function reviseRun(run: RunRecord, feedback: string) {
     },
     builders:
       run.spot.id === spot.id && builderSearch(run.constraints) === builderSearch(constraints) ? run.builders : undefined,
+    field: run.spot.id === spot.id ? run.field : undefined,
   });
   if (run.email.status === "sent") next.email = run.email;
   if (run.call.status === "placed") next.call = run.call;

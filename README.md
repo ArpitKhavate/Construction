@@ -51,7 +51,8 @@ Research works with no keys. With `ANTHROPIC_API_KEY`, the five agents write wit
 | Part | Status |
 |---|---|
 | Zoning, FEMA and city floodplains, nearby permits, wildfire area, pipeline buffer, airport overlay, creek buffer, historic districts | **Live.** Read from the City of Austin's ArcGIS layers for every run. |
-| Address to parcel | **Live.** The Census geocoder finds the address, then it's matched to the TCAD parcel with the same house number. |
+| Address to parcel | **Live.** The Census geocoder finds the address, with Esri's World Geocoder as a fallback for misses and typos. It's then matched to the TCAD parcel with the same house number, or the nearest parcel inside the Austin zoning map. |
+| Demo safety net | **Saved readings** for three demo addresses (3105 Cherrywood Rd, 1000 Barton Springs Rd in a floodplain, and 1500 S Lamar Blvd) in `lib/demo-cache.json`, plus the 16 "Describe it" spots in `lib/anchor-facts-fallback.json`. Live data is always tried first. The saved reading is used only if the city servers fail, are too slow (9s), or answer with most layers missing. The agents and builders still run live. |
 | Satellite map and aerial imagery | **Live.** Esri World Imagery tiles. |
 | Candidate spots for "Describe it" | **Fixed set.** 16 points across Austin neighborhoods (`lib/anchors.ts`), each with a live zoning and flood reading that is cached for 6 hours. Not every parcel. |
 | Agent write-ups (the text on each agent card) | **Live Claude Haiku 5.5**, one call per agent, in parallel (`lib/agents.ts`). Each agent sees only its slice of the live facts and must reply in a fixed JSON format. Source links come from code, not the model. If a call fails or times out (12s), that agent falls back to the rule-written text (`lib/report.ts`). |

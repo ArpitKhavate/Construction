@@ -1,4 +1,5 @@
 import { ANCHORS } from "@/lib/anchors";
+import bundledAnchors from "@/lib/anchor-facts-fallback.json";
 import type { AnchorFact, FieldReport, LayerCheck, PermitHit } from "@/lib/types";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -212,7 +213,8 @@ async function readCachedOrLive(): Promise<AnchorFact[]> {
   }
   const facts = (await mapPool(ANCHORS, 5, readAnchor)).filter((fact): fact is AnchorFact => fact !== null);
   if (facts.length < 3) {
-    throw new Error("Austin zoning did not return enough spots to rank. Try the search again in a moment.");
+    console.warn("[gis] city layers did not answer; using the bundled anchor reading");
+    return (bundledAnchors as { facts: AnchorFact[] }).facts;
   }
   await mkdir(path.dirname(CACHE_PATH), { recursive: true });
   await writeFile(CACHE_PATH, JSON.stringify({ savedAt: Date.now(), facts }));

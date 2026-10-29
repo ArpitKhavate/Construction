@@ -1,0 +1,329 @@
+{
+ "3105 cherrywood": {
+  "fact": {
+   "id": "addr-205382",
+   "name": "3105 Cherrywood Rd",
+   "lng": -97.71680725354354,
+   "lat": 30.286239368037243,
+   "address": "3105 Cherrywood Rd",
+   "zoning": "SF-3-NP",
+   "zoningBase": "SF",
+   "fema": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "coaFlood": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   }
+  },
+  "field": {
+   "zoning": "SF-3-NP",
+   "zoningBase": "SF",
+   "address": "3105 Cherrywood Rd",
+   "fema": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "coaFlood": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "nearFlood": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "permits": [
+    {
+     "year": "2026",
+     "type": "Building Permit",
+     "status": "Active",
+     "address": "1719 E 32ND ST BLDG 2",
+     "units": 1,
+     "number": "2026-082568 BP",
+     "work": "ePlan: Residential Expedited Review - New construction of a 2-Story Single Family Res. [3bed 2.5bath] with Attached Garage. Bldg 2",
+     "link": "https://abc.austintexas.gov/web/permit/public-search-other?t_detail=1&t_selected_folderrsn=13728435"
+    },
+    {
+     "year": "2026",
+     "type": "Building Permit",
+     "status": "Active",
+     "address": "1719 E 32ND ST BLDG 1",
+     "units": 1,
+     "number": "2026-082567 BP",
+     "work": "ePlan: Residential Expedited Review - New construction of a 2-Story Single Family Res. [3bed 2.5bath] with Attached Garage. Bldg 1",
+     "link": "https://abc.austintexas.gov/web/permit/public-search-other?t_detail=1&t_selected_folderrsn=13728434"
+    },
+    {
+     "year": "2026",
+     "type": "Building Permit",
+     "status": "Active",
+     "address": "3114 WALNUT AVE",
+     "units": 1,
+     "number": "2026-076323 BP",
+     "work": "ePlan: Residential Expedited Review - New construction of a 2-Story Single Family Res. [4bed 3bath] with Attached Garage. 3114 Walnut Ave. ",
+     "link": "https://abc.austintexas.gov/web/permit/public-search-other?t_detail=1&t_selected_folderrsn=13721513"
+    },
+    {
+     "year": "2026",
+     "type": "Building Permit",
+     "status": "Active",
+     "address": "1725 E 32ND ST",
+     "units": 1,
+     "number": "2026-076325 BP",
+     "work": "ePlan: Residential Expedited Review - New construction of a 2-Story Single Family Res. [4bed 3bath] with Attached Garage. 1725 E 32nd St. ",
+     "link": "https://abc.austintexas.gov/web/permit/public-search-other?t_detail=1&t_selected_folderrsn=13721515"
+    }
+   ],
+   "wui": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "pipeline": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "airport": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "creek": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "historic": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   }
+  },
+  "savedAt": "2026-10-29T11:18:04.958145+00:00"
+ },
+ "1000 barton": {
+  "fact": {
+   "id": "addr-102025",
+   "name": "1000 Barton Springs Rd",
+   "lng": -97.75455056639015,
+   "lat": 30.25960733324219,
+   "address": "1000 Barton Springs Rd",
+   "zoning": "CS-V-NP",
+   "zoningBase": "CS",
+   "fema": {
+    "state": "hit",
+    "label": "AE",
+    "detail": "AE"
+   },
+   "coaFlood": {
+    "state": "hit",
+    "label": "City of Austin Fully Developed 25-Year Floodplain",
+    "detail": "City of Austin Fully Developed 25-Year Floodplain"
+   }
+  },
+  "field": {
+   "zoning": "CS-V-NP",
+   "zoningBase": "CS",
+   "address": "1000 Barton Springs Rd",
+   "fema": {
+    "state": "hit",
+    "label": "AE",
+    "detail": "AE"
+   },
+   "coaFlood": {
+    "state": "hit",
+    "label": "City of Austin Fully Developed 25-Year Floodplain",
+    "detail": "City of Austin Fully Developed 25-Year Floodplain"
+   },
+   "nearFlood": {
+    "state": "hit",
+    "label": "AE",
+    "detail": "AE, .2 PCT ANNUAL CHANCE FLOOD HAZARD"
+   },
+   "permits": [
+    {
+     "year": "2026",
+     "type": "Building Permit",
+     "status": "Active",
+     "address": "517 BOULDIN AVE BLDG 2",
+     "units": 1,
+     "number": "2026-109642 BP",
+     "work": "ePlan: Residential Expedited Review - New construction of a 3-Story Single Family Res. [2bed 3.5bath] with Attached Garage. Bldg 2",
+     "link": "https://abc.austintexas.gov/web/permit/public-search-other?t_detail=1&t_selected_folderrsn=13759721"
+    },
+    {
+     "year": "2026",
+     "type": "Building Permit",
+     "status": "Active",
+     "address": "517 BOULDIN AVE BLDG 1",
+     "units": 0,
+     "number": "2026-109644 BP",
+     "work": "ePlan: Residential Expedited Review - Autofill/Heated Pool. Bldg 1",
+     "link": "https://abc.austintexas.gov/web/permit/public-search-other?t_detail=1&t_selected_folderrsn=13759723"
+    },
+    {
+     "year": "2026",
+     "type": "Building Permit",
+     "status": "Active",
+     "address": "517 BOULDIN AVE BLDG 3",
+     "units": 0,
+     "number": "2026-109645 BP",
+     "work": "ePlan: Residential Expedited Review - Autofill/Heated Pool. Bldg 3",
+     "link": "https://abc.austintexas.gov/web/permit/public-search-other?t_detail=1&t_selected_folderrsn=13759724"
+    },
+    {
+     "year": "2026",
+     "type": "Building Permit",
+     "status": "Active",
+     "address": "517 BOULDIN AVE BLDG 3",
+     "units": 1,
+     "number": "2026-109643 BP",
+     "work": "ePlan: Residential Expedited Review - New construction of a 2-Story Single Family Res. [3bed 3.5bath] with Attached Garage. Bldg 3",
+     "link": "https://abc.austintexas.gov/web/permit/public-search-other?t_detail=1&t_selected_folderrsn=13759722"
+    }
+   ],
+   "wui": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "pipeline": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "airport": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "creek": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "historic": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   }
+  },
+  "savedAt": "2026-10-29T11:18:11.465513+00:00"
+ },
+ "1500 lamar": {
+  "fact": {
+   "id": "addr-771587",
+   "name": "1500 S Lamar Blvd",
+   "lng": -97.76497284012531,
+   "lat": 30.252775669391763,
+   "address": "1500 S Lamar Blvd",
+   "zoning": "GR-MU-CO",
+   "zoningBase": "GR",
+   "fema": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "coaFlood": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   }
+  },
+  "field": {
+   "zoning": "GR-MU-CO",
+   "zoningBase": "GR",
+   "address": "1500 S Lamar Blvd",
+   "fema": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "coaFlood": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "nearFlood": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "permits": [
+    {
+     "year": "2025",
+     "type": "Building Permit",
+     "status": "Final",
+     "address": "1509 S LAMAR BLVD UNIT 600",
+     "units": 9,
+     "number": "2025-119762 BP",
+     "work": "Nails salon/spa replace bar venue",
+     "link": "https://abc.austintexas.gov/web/permit/public-search-other?t_detail=1&t_selected_folderrsn=13585243"
+    },
+    {
+     "year": "2024",
+     "type": "Building Permit",
+     "status": "Expired",
+     "address": "1328 LAMAR SQUARE DR",
+     "units": 1,
+     "number": "2024-039915 BP",
+     "work": "Demolition of an Apartment Complex 8770 approx sq ft Circa 1969\n\nDA-2023-1377-Approved \n\n***The building shall not be demolished until after the contractor has fulfilled the neighbor notification requirements outlined in Steps 5 & 6 of the Demolition",
+     "link": "https://abc.austintexas.gov/web/permit/public-search-other?t_detail=1&t_selected_folderrsn=13305483"
+    },
+    {
+     "year": "2024",
+     "type": "Building Permit",
+     "status": "Active",
+     "address": "1401 S LAMAR BLVD UNIT 1102",
+     "units": 309,
+     "number": "2023-104816 BP",
+     "work": "Tenant finish-out for restaurant.",
+     "link": "https://abc.austintexas.gov/web/permit/public-search-other?t_detail=1&t_selected_folderrsn=13192814"
+    },
+    {
+     "year": "2024",
+     "type": "Building Permit",
+     "status": "Final",
+     "address": "1401 S LAMAR BLVD",
+     "units": 1,
+     "number": "2024-014345 BP",
+     "work": "Construction of 2 Swimming Pools above parking garage - West and East Courtyard ",
+     "link": "https://abc.austintexas.gov/web/permit/public-search-other?t_detail=1&t_selected_folderrsn=13276527"
+    }
+   ],
+   "wui": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "pipeline": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "airport": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "creek": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "historic": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   }
+  },
+  "savedAt": "2026-10-29T11:18:18.234942+00:00"
+ }
+}

@@ -1,0 +1,233 @@
+{
+ "savedAt": 1793266521389,
+ "facts": [
+  {
+   "id": "east-8th",
+   "name": "East 8th",
+   "lng": -97.7205,
+   "lat": 30.2628,
+   "address": "2005 E 8TH ST",
+   "zoning": "SF-3-NP",
+   "zoningBase": "SF",
+   "fema": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "coaFlood": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   }
+  },
+  {
+   "id": "south-congress",
+   "name": "South Congress",
+   "lng": -97.7495,
+   "lat": 30.249,
+   "address": "1421 S CONGRESS AVE",
+   "zoning": "CS-V-NCCD-ETOD-DBETOD-NP",
+   "zoningBase": "CS",
+   "fema": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "coaFlood": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   }
+  },
+  {
+   "id": "riverside",
+   "name": "East Riverside",
+   "lng": -97.7228,
+   "lat": 30.2405,
+   "address": "2300 1/2 ELMONT DR",
+   "zoning": "PUD-NP",
+   "zoningBase": "PUD",
+   "fema": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "coaFlood": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   }
+  },
+  {
+   "id": "crestview",
+   "name": "Crestview",
+   "lng": -97.7198,
+   "lat": 30.3385,
+   "address": "6932 N LAMAR BLVD",
+   "zoning": "TOD-NP",
+   "zoningBase": "TOD",
+   "fema": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "coaFlood": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   }
+  },
+  {
+   "id": "st-johns",
+   "name": "St. Johns",
+   "lng": -97.71,
+   "lat": 30.332,
+   "address": "6807 DEBORAH DR",
+   "zoning": "SF-3-NP",
+   "zoningBase": "SF",
+   "fema": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "coaFlood": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   }
+  },
+  {
+   "id": "cherrywood",
+   "name": "Cherrywood",
+   "lng": -97.719,
+   "lat": 30.2865,
+   "address": "3005 FRENCH PL",
+   "zoning": "SF-3-NP",
+   "zoningBase": "SF",
+   "fema": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "coaFlood": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   }
+  },
+  {
+   "id": "montopolis",
+   "name": "Montopolis",
+   "lng": -97.698,
+   "lat": 30.232,
+   "address": "1111 MONTOPOLIS DR",
+   "zoning": "SF-3-NP",
+   "zoningBase": "SF",
+   "fema": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "coaFlood": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   }
+  },
+  {
+   "id": "north-loop",
+   "name": "North Loop",
+   "lng": -97.7225,
+   "lat": 30.3185,
+   "address": "112 W NORTH LOOP BLVD",
+   "zoning": "SF-3-NP",
+   "zoningBase": "SF",
+   "fema": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "coaFlood": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   }
+  },
+  {
+   "id": "mlk",
+   "name": "MLK",
+   "lng": -97.708,
+   "lat": 30.281,
+   "address": "1804 CLIFFORD AVE",
+   "zoning": "SF-3-NP",
+   "zoningBase": "SF",
+   "fema": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "coaFlood": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   }
+  },
+  {
+   "id": "rundberg",
+   "name": "Rundberg",
+   "lng": -97.711,
+   "lat": 30.3555,
+   "address": "8406 LEESBURG CIR",
+   "zoning": "SF-3-NP",
+   "zoningBase": "SF",
+   "fema": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   },
+   "coaFlood": {
+    "state": "clear",
+    "label": null,
+    "detail": null
+   }
+  },
+  {
+   "id": "dove-springs",
+   "name": "Dove Springs",
+   "lng": -97.748,
+   "lat": 30.182,
+   "address": "5003 CREEK BEND DR",
+   "zoning": "P",
+   "zoningBase": "P",
+   "fema": {
+    "state": "hit",
+    "label": "AE",
+    "detail": "AE"
+   },
+   "coaFlood": {
+    "state": "hit",
+    "label": "City of Austin Fully Developed 25-Year Floodplain",
+    "detail": "City of Austin Fully Developed 25-Year Floodplain"
+   }
+  },
+  {
+   "id": "hyde-park",
+   "name": "Hyde Park",
+   "lng": -97.7275,
+   "lat": 30.309,
+   "address": "4506 AVENUE F",
+   "zoning": "SF-3-NCCD-NP",
+   "zoningBase": "SF",
+   "fema": {
+    "state": "hit",
+    "label": "AE",
+    "detail": "AE"
+   },
+   "coaFlood": {
+    "state": "hit",
+    "label": "City of Austin Fully Developed 25-Year Floodplain",
+    "detail": "City of Austin Fully Developed 25-Year Floodplain"
+   }
+  }
+ ]
+}

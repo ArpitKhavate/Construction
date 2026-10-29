@@ -402,9 +402,9 @@ export default function MapDesk({ story, onHome }: { story?: MapStory; onHome?: 
             onHome();
           }}
         >
-          <span className="brand-mark">C</span>
+          <span className="brand-mark">B</span>
           <span>
-            <strong>Construction</strong>
+            <strong>BuildWright</strong>
             <small>Austin site research</small>
           </span>
         </a>

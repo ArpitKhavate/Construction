@@ -1,8 +1,8 @@
-# Construction
+# BuildWright
 
 **Know what you can build on an Austin lot before you buy it.**
 
-First-time builders, such as someone adding a backyard home (ADU) or building a small fourplex, usually learn about zoning, floodplains and permit rules after they've already paid for something. Construction reads Austin's public city maps for a specific lot and explains what applies, in plain language with a source for every fact. It ends with a checklist of what to do next, draft emails and calls, and pre-filled permit forms.
+First-time builders, such as someone adding a backyard home (ADU) or building a small fourplex, usually learn about zoning, floodplains and permit rules after they've already paid for something. BuildWright reads Austin's public city maps for a specific lot and explains what applies, in plain language with a source for every fact. It ends with a checklist of what to do next, draft emails and calls, and pre-filled permit forms.
 
 ## What it does
 

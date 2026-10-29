@@ -258,7 +258,7 @@ export function RunDesk({ id }: { id: string }) {
   return (
     <main className="run">
       <header className="run-bar">
-        <Link href="/">Construction</Link>
+        <Link href="/">BuildWright</Link>
         <Link href={mapHref}>Back to the map</Link>
       </header>
       <div className="run-wrap">

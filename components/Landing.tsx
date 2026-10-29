@@ -97,7 +97,7 @@ export default function Landing() {
 
       {hero === "a" ? (
         <header className={`land-head${onMap ? " is-off" : ""}`}>
-          <span className="wordmark display">Construction</span>
+          <span className="wordmark display">BuildWright</span>
           <span className="land-place">Austin, Texas</span>
         </header>
       ) : (
@@ -161,7 +161,7 @@ export default function Landing() {
 function ArpitNav({ onEnter, hidden }: { onEnter: () => void; hidden: boolean }) {
   return (
     <header className={`land-head hero-nav-light${hidden ? " is-off" : ""}`}>
-      <span className="hero-logo" aria-label="Construction">
+      <span className="hero-logo" aria-label="BuildWright">
         <HardHat />
       </span>
       <nav className="hero-links" aria-label="Primary">

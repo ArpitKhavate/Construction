@@ -12,7 +12,7 @@ import "./map-panel.css";
 const archivo = Archivo({ variable: "--font-archivo", subsets: ["latin"], axes: ["wdth"] });
 
 export const metadata: Metadata = {
-  title: "Construction",
+  title: "BuildWright",
   description: "Find an Austin spot, research the site, and get the beginner permit checklist.",
 };
 

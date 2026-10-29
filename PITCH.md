@@ -1,4 +1,4 @@
-# Pitch: Construction
+# Pitch: BuildWright
 
 Judging: Fri 2026-10-30, 13:00–16:00, at a table with Q&A, repeated for three hours. Criteria: Application, Functionality/Quality, Creativity, Technical Complexity. Tracks: AutoHDR and Antler.
 
@@ -11,7 +11,7 @@ Judging: Fri 2026-10-30, 13:00–16:00, at a table with Q&A, repeated for three 
 ## 2-minute demo script
 
 **0:00–0:20: The problem (one speaker, facing the judge)**
-> "Most people building for the first time find out what their lot allows after they've paid for it. In one industry survey, 75% of project owners went over budget and 77% finished late, across all sectors. In Austin, the answers are public, but they're split across a dozen city maps and process pages. Construction reads all of them for your exact lot."
+> "Most people building for the first time find out what their lot allows after they've paid for it. In one industry survey, 75% of project owners went over budget and 77% finished late, across all sectors. In Austin, the answers are public, but they're split across a dozen city maps and process pages. BuildWright reads all of them for your exact lot."
 
 **0:20–0:40: Landing to map (the other speaker drives)**
 - Scroll once. The camera flies up over the street and lands looking straight down, and the real satellite map of Austin fades in.

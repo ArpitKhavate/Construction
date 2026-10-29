@@ -139,6 +139,16 @@ export type PermitPacket = {
   forms: PermitForm[];
 };
 
+export type Builder = {
+  name: string;
+  phone: string | null;
+  website: string | null;
+  address: string | null;
+  rating: number | null;
+  reviews: number | null;
+  mapsUrl: string | null;
+};
+
 export type RunRecord = {
   id: string;
   prompt: string;
@@ -149,6 +159,7 @@ export type RunRecord = {
   checklist: ChecklistItem[];
   email: OutreachDraft;
   call: CallDraft;
+  builders?: Builder[];
   render: RenderResult | null;
   permitsPacket: PermitPacket | null;
   revision: Revision | null;

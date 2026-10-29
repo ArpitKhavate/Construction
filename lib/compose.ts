@@ -1,5 +1,6 @@
 import { applyFeedback, constraintsChanged, parseConstraints } from "@/lib/constraints";
 import { readAddress } from "@/lib/address";
+import { builderSearch, findBuilders, withBuilderEmail, withBuilderItem } from "@/lib/builders";
 import { loadAnchorFacts, readField } from "@/lib/gis";
 import { annotateSpot, rankSpots } from "@/lib/rank";
 import { runAgents } from "@/lib/agents";
@@ -14,12 +15,18 @@ export async function buildRun(input: {
   createdAt?: string;
   feedback?: string[];
   revision?: RunRecord["revision"];
+  builders?: RunRecord["builders"];
 }): Promise<RunRecord> {
+  // Builders load beside the GIS read and are capped so they never hold the run up.
+  const buildersJob = input.builders
+    ? Promise.resolve(input.builders)
+    : findBuilders(input.constraints, input.spot).then((found) => found.builders);
   const started = Date.now();
   const field = await readField(input.spot);
   const elapsed = Date.now() - started;
   const steps = await runAgents(input.spot, field, input.constraints, { prompt: input.prompt, fallbackMs: elapsed });
   const now = new Date().toISOString();
+  const builders = await buildersJob;
   return {
     id: input.id ?? crypto.randomUUID(),
     prompt: input.prompt,
@@ -27,8 +34,9 @@ export async function buildRun(input: {
     spot: input.spot,
     field,
     steps,
-    checklist: buildChecklist(input.constraints, field),
-    email: buildEmail(input.spot, field, input.constraints),
+    checklist: withBuilderItem(buildChecklist(input.constraints, field), builders),
+    email: withBuilderEmail(buildEmail(input.spot, field, input.constraints), builders),
+    builders,
     call: buildCall(input.spot, field, input.constraints),
     render: null,
     permitsPacket: null,
@@ -98,6 +106,8 @@ export async function reviseRun(run: RunRecord, feedback: string) {
       toName: spot.name,
       moved: !stayed,
     },
+    builders:
+      run.spot.id === spot.id && builderSearch(run.constraints) === builderSearch(constraints) ? run.builders : undefined,
   });
   if (run.email.status === "sent") next.email = run.email;
   if (run.call.status === "placed") next.call = run.call;

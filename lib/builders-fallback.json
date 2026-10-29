@@ -1,0 +1,87 @@
+{
+  "adu": [
+    {
+      "name": "Alchemy Builders",
+      "phone": "(512) 222-9940",
+      "website": "https://www.alchemy.builders/",
+      "address": "108 Chicon St, Austin, TX 78702",
+      "rating": 5,
+      "reviews": 57,
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Alchemy%20Builders&query_place_id=ChIJY6EtabS1RIYRJ_yNO17ceRQ"
+    },
+    {
+      "name": "Austin Home Additions and ADUs",
+      "phone": "(512) 937-5593",
+      "website": "https://austinhomeadditions.com/",
+      "address": "1700 S Lamar Blvd #338, Austin, TX 78704",
+      "rating": 5,
+      "reviews": 39,
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Austin%20Home%20Additions%20and%20ADUs&query_place_id=ChIJqVih3w-1RIYRSGYAvd7uEMk"
+    },
+    {
+      "name": "CKN HOMES",
+      "phone": "(512) 200-4238",
+      "website": "https://www.cknhomes.com/",
+      "address": "2025 E 7th St Ste 109, Austin, TX 78702",
+      "rating": 5,
+      "reviews": 24,
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=CKN%20HOMES&query_place_id=ChIJV2OUdHUM5W4RK-5BdiTAUT4"
+    },
+    {
+      "name": "Soledad Builders, LLC",
+      "phone": "(512) 306-8310",
+      "website": "http://www.soledadbuilders.com/",
+      "address": "706 W 34th St A, Austin, TX 78705",
+      "rating": 4.8,
+      "reviews": 10,
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Soledad%20Builders%2C%20LLC&query_place_id=ChIJLX6fOzO1RIYR1-IeLEDpN7Y"
+    },
+    {
+      "name": "Moontower",
+      "phone": "(512) 524-7253",
+      "website": "https://www.moontoweraustin.com/",
+      "address": "828 Airport Blvd, Austin, TX 78702",
+      "rating": 4.9,
+      "reviews": 22,
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Moontower&query_place_id=ChIJ0_Z0a362RIYR6eX0GVIpL4U"
+    }
+  ],
+  "home": [
+    {
+      "name": "LV Design & Build",
+      "phone": "(512) 669-8838",
+      "website": "https://lvbuild.com/",
+      "address": "6901 Villita Cove, Austin, TX 78741",
+      "rating": 4.9,
+      "reviews": 35,
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=LV%20Design%20%26%20Build&query_place_id=ChIJkRGdOf_UW2sRXchVTX0W4XY"
+    },
+    {
+      "name": "Neon Agave Homes",
+      "phone": "(512) 461-0382",
+      "website": "https://www.neonagave.com/",
+      "address": "4203 Afton Ln, Austin, TX 78744",
+      "rating": 5,
+      "reviews": 6,
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Neon%20Agave%20Homes&query_place_id=ChIJO33euloizaIReWCCfP8ymzU"
+    },
+    {
+      "name": "Southerly Homes",
+      "phone": "(512) 831-3645",
+      "website": "https://southerlyhomes.com/",
+      "address": "3000 S I-35 Frontage Rd Ste 225, Austin, TX 78704",
+      "rating": 4.9,
+      "reviews": 48,
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Southerly%20Homes&query_place_id=ChIJH2U0ayBhH6gRYlDjFBJQmnw"
+    },
+    {
+      "name": "Texas Modular Homes",
+      "phone": "(210) 201-7240",
+      "website": null,
+      "address": "6317 E Ben White Blvd B, Austin, TX 78741",
+      "rating": 3.7,
+      "reviews": 3,
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Texas%20Modular%20Homes&query_place_id=ChIJ3_nCVgi0RIYR_twuVTrrayI"
+    }
+  ]
+}

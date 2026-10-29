@@ -3,13 +3,15 @@ import path from "node:path";
 import fallback from "@/lib/builders-fallback.json";
 import type { Builder, ChecklistItem, Constraints, OutreachDraft, Spot } from "@/lib/types";
 
-// Google Maps Scraper on Apify. Five places with no add-ons costs about two cents a run.
+// Google Maps Scraper on Apify. Five places with three reviews each costs a few cents a run.
 const ACTOR = "compass~crawler-google-places";
 const CACHE_PATH = path.join(process.cwd(), ".data", "builders.json");
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 const LIVE_WAIT_MS = 5000;
 const ACTOR_TIMEOUT_S = 120;
 const COUNT = 5;
+const MAX_REVIEWS = 3;
+const REVIEW_CHARS = 220;
 
 export type BuilderSearch = "adu" | "home" | "commercial";
 export type BuilderSource = "cache" | "live" | "bundled";
@@ -29,6 +31,9 @@ type Place = {
   reviewsCount?: number | null;
   url?: string | null;
   permanentlyClosed?: boolean;
+  categoryName?: string | null;
+  imageUrl?: string | null;
+  reviews?: { name?: string | null; text?: string | null; stars?: number | null }[] | null;
 };
 
 type CacheFile = Record<string, { savedAt: number; builders: Builder[] }>;
@@ -47,6 +52,25 @@ function areaKey(spot: Spot) {
   return zip ?? `${spot.lat.toFixed(2)},${spot.lng.toFixed(2)}`;
 }
 
+// Cut a long review at the last sentence end that fits, else at a word with an ellipsis.
+function shorten(text: string) {
+  const clean = text.replace(/\s+/g, " ").trim();
+  if (clean.length <= REVIEW_CHARS) return clean;
+  const head = clean.slice(0, REVIEW_CHARS);
+  const stop = Math.max(head.lastIndexOf(". "), head.lastIndexOf("! "), head.lastIndexOf("? "));
+  if (stop >= 80) return head.slice(0, stop + 1);
+  return `${head.slice(0, head.lastIndexOf(" ")).replace(/[,;:\s]+$/, "")}…`;
+}
+
+// The best review is a well-rated one with some substance, preferring ones that fit uncut.
+function pickReview(reviews: Place["reviews"]) {
+  const usable = (reviews ?? []).filter((item) => (item.text?.trim().length ?? 0) >= 40 && (item.stars ?? 5) >= 4);
+  if (!usable.length) return null;
+  const fits = usable.find((item) => item.text!.trim().length <= REVIEW_CHARS);
+  const best = fits ?? usable[0];
+  return { review: shorten(best.text!), reviewer: best.name?.trim() || null };
+}
+
 function toBuilder(place: Place): Builder | null {
   if (!place.title || place.permanentlyClosed) return null;
   return {
@@ -57,6 +81,11 @@ function toBuilder(place: Place): Builder | null {
     rating: typeof place.totalScore === "number" ? place.totalScore : null,
     reviews: typeof place.reviewsCount === "number" ? place.reviewsCount : null,
     mapsUrl: place.url ?? null,
+    category: place.categoryName ?? null,
+    photo: place.imageUrl ?? null,
+    review: null,
+    reviewer: null,
+    ...pickReview(place.reviews),
   };
 }
 
@@ -64,7 +93,9 @@ async function readCache(key: string): Promise<Builder[] | null> {
   try {
     const parsed = JSON.parse(await readFile(CACHE_PATH, "utf8")) as CacheFile;
     const hit = parsed[key];
-    if (hit && Date.now() - hit.savedAt < CACHE_TTL_MS && hit.builders.length) return hit.builders;
+    // Entries saved before photos and reviews were scraped count as stale.
+    const current = hit?.builders.length && "photo" in hit.builders[0];
+    if (hit && current && Date.now() - hit.savedAt < CACHE_TTL_MS) return hit.builders;
   } catch {
     // No cache yet.
   }
@@ -89,7 +120,7 @@ export async function scrapeBuilders(search: BuilderSearch, spot: Pick<Spot, "la
   const url = new URL(`https://api.apify.com/v2/acts/${ACTOR}/run-sync-get-dataset-items`);
   url.searchParams.set("timeout", String(ACTOR_TIMEOUT_S));
   url.searchParams.set("clean", "true");
-  url.searchParams.set("fields", "title,phone,website,address,totalScore,reviewsCount,url,permanentlyClosed");
+  url.searchParams.set("fields", "title,phone,website,address,totalScore,reviewsCount,url,permanentlyClosed,categoryName,imageUrl,reviews");
   const response = await fetch(url, {
     method: "POST",
     cache: "no-store",
@@ -98,6 +129,10 @@ export async function scrapeBuilders(search: BuilderSearch, spot: Pick<Spot, "la
       searchStringsArray: [TERMS[search]],
       customGeolocation: { type: "Point", coordinates: [spot.lng, spot.lat], radiusKm: 8 },
       maxCrawledPlacesPerSearch: COUNT,
+      maxReviews: MAX_REVIEWS,
+      reviewsSort: "mostRelevant",
+      maxImages: 0,
+      scrapeReviewsPersonalData: true,
       language: "en",
       countryCode: "us",
     }),
@@ -116,7 +151,7 @@ function bundled(search: BuilderSearch): Builder[] {
   return (sets[search] ?? sets.home ?? sets.adu ?? []).slice(0, COUNT);
 }
 
-// Cache, then a live scrape capped at 15s, then the bundled list. A slow scrape keeps
+// Cache, then a live scrape capped at 5s, then the bundled list. A slow scrape keeps
 // running after the timeout and fills the cache for the next run. This never throws.
 export async function findBuilders(
   constraints: Constraints,

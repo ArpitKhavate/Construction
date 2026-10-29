@@ -7,7 +7,11 @@
       "address": "108 Chicon St, Austin, TX 78702",
       "rating": 5,
       "reviews": 57,
-      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Alchemy%20Builders&query_place_id=ChIJY6EtabS1RIYRJ_yNO17ceRQ"
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Alchemy%20Builders&query_place_id=ChIJY6EtabS1RIYRJ_yNO17ceRQ",
+      "category": "Custom home builder",
+      "photo": "https://gz0.googleusercontent.com/grass-cs/AABkmLf1k-1UjFA8_Gby2Rhro8HkizOOxPvaQbiPO8enzQG4yC0-2LEgqIBTCKSJOd4sFlsR4Ri30Lgu0NM8G-tVZZMbhNJrhA6mo8c9ryo_TZS8cNgVuRfg0PKv3SZBnwcFvTONnmJLOBjGdBT_=w411-h273-k-no",
+      "review": "On time, and on budget. Jayson & Alchemy Builders did an incredible job renovating our house. Their designer Michelle took my inspo pics and brought them to life.",
+      "reviewer": "Real Mom, Real Tired"
     },
     {
       "name": "Austin Home Additions and ADUs",
@@ -16,7 +20,11 @@
       "address": "1700 S Lamar Blvd #338, Austin, TX 78704",
       "rating": 5,
       "reviews": 39,
-      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Austin%20Home%20Additions%20and%20ADUs&query_place_id=ChIJqVih3w-1RIYRSGYAvd7uEMk"
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Austin%20Home%20Additions%20and%20ADUs&query_place_id=ChIJqVih3w-1RIYRSGYAvd7uEMk",
+      "category": "Construction company",
+      "photo": "https://gz0.googleusercontent.com/grass-cs/AABkmLdgc--lpHcw7qkjzChdHczFyjBTBeeCGzfPtP7AhIJQhdVRMbD7XmmJTCG_DZ0c4EiJh2_45nqnzzLlDdZ5LIUbyE0jM230WM03Ur4KRr_MFGbzrgqYQiCmHWEiZAkFcwMymXQpH2Y-H2lY=w411-h548-k-no",
+      "review": "We hired Austin Home Additions for a full remodel of our home we had just purchased... and we couldn’t be happier with the results!",
+      "reviewer": "amelia weizman"
     },
     {
       "name": "CKN HOMES",
@@ -25,16 +33,11 @@
       "address": "2025 E 7th St Ste 109, Austin, TX 78702",
       "rating": 5,
       "reviews": 24,
-      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=CKN%20HOMES&query_place_id=ChIJV2OUdHUM5W4RK-5BdiTAUT4"
-    },
-    {
-      "name": "Soledad Builders, LLC",
-      "phone": "(512) 306-8310",
-      "website": "http://www.soledadbuilders.com/",
-      "address": "706 W 34th St A, Austin, TX 78705",
-      "rating": 4.8,
-      "reviews": 10,
-      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Soledad%20Builders%2C%20LLC&query_place_id=ChIJLX6fOzO1RIYR1-IeLEDpN7Y"
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=CKN%20HOMES&query_place_id=ChIJV2OUdHUM5W4RK-5BdiTAUT4",
+      "category": "Custom home builder",
+      "photo": "https://gz0.googleusercontent.com/grass-cs/AABkmLf2WxLxzKorUqmAZVqYSrLFq0ofOQ3kOHZS3Zi8zVS3UoEI8FNEhvQPNMNdArXu0zBfgH38d2Knkr46w7gcun_uVsx2Ga1H23Qw8-rrEUeiFVG-2WzVRwaZCj9cXbi1ueygEK9inoQNpKA=w411-h276-k-no",
+      "review": "I’ve had the opportunity to see the work done by CKN Homes here in Austin, TX, and I can confidently say they are one of the top custom home builders and remodeling companies in the area.",
+      "reviewer": "Juan Martinez"
     },
     {
       "name": "Moontower",
@@ -43,45 +46,91 @@
       "address": "828 Airport Blvd, Austin, TX 78702",
       "rating": 4.9,
       "reviews": 22,
-      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Moontower&query_place_id=ChIJ0_Z0a362RIYR6eX0GVIpL4U"
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Moontower&query_place_id=ChIJ0_Z0a362RIYR6eX0GVIpL4U",
+      "category": "General contractor",
+      "photo": "https://gz0.googleusercontent.com/grass-cs/AABkmLftD11O3deiEtjt8dP2MzgXjcU_ELSoYb2RmEAkQEewMZ_wOA_allu1YMu7Hqs_cRvOPkBOIMs91RgGDmIcnxWwznwy-TqF-oTw1juOPpv3bWz5tyccqFMBZXTXtaQKeUmSVsiV=w411-h274-k-no",
+      "review": "We have worked with Moontower since 2017 when we first emailed asking if they would be open to taking on our full home renovation project.",
+      "reviewer": "Erin Holsonback"
+    },
+    {
+      "name": "Soledad Builders, LLC",
+      "phone": "(512) 306-8310",
+      "website": "http://www.soledadbuilders.com/",
+      "address": "706 W 34th St A, Austin, TX 78705",
+      "rating": 4.8,
+      "reviews": 10,
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Soledad%20Builders%2C%20LLC&query_place_id=ChIJLX6fOzO1RIYR1-IeLEDpN7Y",
+      "category": "Custom home builder",
+      "photo": "https://gz0.googleusercontent.com/grass-cs/AABkmLdKvFN00xhxquV68-z9PzEoqwuQMdsMplL2d5iF41KPl2r7rKVqOgM8zOMyih6Lm4NOCzlYwa3kaPC6sh_IqYzA1iaueRxEYCd7lKcZorH3b8sRMIm2HPPdTWKhyuc1AuJN72no=w411-h301-k-no",
+      "review": "The Soledad team is fantastic! They were so welcoming during the NARI Tour and made the experience even better. Such a professional and collaborative group.",
+      "reviewer": "Madeline Pocta Butler"
     }
   ],
   "home": [
     {
-      "name": "LV Design & Build",
-      "phone": "(512) 669-8838",
-      "website": "https://lvbuild.com/",
-      "address": "6901 Villita Cove, Austin, TX 78741",
-      "rating": 4.9,
-      "reviews": 35,
-      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=LV%20Design%20%26%20Build&query_place_id=ChIJkRGdOf_UW2sRXchVTX0W4XY"
-    },
-    {
-      "name": "Neon Agave Homes",
-      "phone": "(512) 461-0382",
-      "website": "https://www.neonagave.com/",
-      "address": "4203 Afton Ln, Austin, TX 78744",
+      "name": "Bailey and Bear Construction",
+      "phone": "(512) 689-8346",
+      "website": "https://baileybearconstruction.com/",
+      "address": "4807 Seedling Path, Austin, TX 78723",
       "rating": 5,
-      "reviews": 6,
-      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Neon%20Agave%20Homes&query_place_id=ChIJO33euloizaIReWCCfP8ymzU"
+      "reviews": 60,
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Bailey%20and%20Bear%20Construction&query_place_id=ChIJj0waXPT20S4RntMq9A91fd4",
+      "category": "General contractor",
+      "photo": "https://gz0.googleusercontent.com/grass-cs/AABkmLfFgzGha1X5UnqJH9cBuP6ORkchucnAdrmJe5htdMfRg6msGEGKEB84KRzTtLup8UhdB94i9GJWgj7m1YsqlnUMH6xn8IsdjE4Ft4hMXzlt4P0AYxmo_8Kh8RzENyIkcFS0IG75jg=w411-h187-k-no",
+      "review": "I could not have asked for a better contractor! I needed two bathroom vanities updated in my home—one double-sink in the primary and one single-sink in the guest bathroom.",
+      "reviewer": "Fernando Rivera"
     },
     {
-      "name": "Southerly Homes",
-      "phone": "(512) 831-3645",
-      "website": "https://southerlyhomes.com/",
-      "address": "3000 S I-35 Frontage Rd Ste 225, Austin, TX 78704",
+      "name": "Verde Builders Custom Homes",
+      "phone": "(512) 653-2522",
+      "website": "https://verdebuildersaustin.com/?utm_source=google&utm_medium=local&utm_campaign=gbp",
+      "address": "2931 E 12th St Suite 102, Austin, TX 78702",
       "rating": 4.9,
-      "reviews": 48,
-      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Southerly%20Homes&query_place_id=ChIJH2U0ayBhH6gRYlDjFBJQmnw"
+      "reviews": 45,
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Verde%20Builders%20Custom%20Homes&query_place_id=ChIJJ7XeTZ9JW4YRKhJtBEvghro",
+      "category": "Custom home builder",
+      "photo": "https://gz0.googleusercontent.com/grass-cs/AABkmLflD6wDwzDv0A6QctS2ykL7YZxYB44W6WyQnJoFGtBHCPEPGdxnyDzkJnWTjHHlzTVTtZnJgjt3kbKw285GSDDjZ8R0wuQVUkIoBbyT5g6-W2lswNAc6MgT2Uka_nMdiOKijVvG3g=w411-h231-k-no",
+      "review": "Daniel and his team at Verde are committed to getting the job done right. He remodeled our house on Lake Austin and we are very pleased with the results. It was a really complex project and his team delivered.",
+      "reviewer": "Tom West"
     },
     {
-      "name": "Texas Modular Homes",
-      "phone": "(210) 201-7240",
-      "website": null,
-      "address": "6317 E Ben White Blvd B, Austin, TX 78741",
-      "rating": 3.7,
-      "reviews": 3,
-      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Texas%20Modular%20Homes&query_place_id=ChIJ3_nCVgi0RIYR_twuVTrrayI"
+      "name": "Newcastle Homes",
+      "phone": "(512) 454-4600",
+      "website": "https://www.austinnewcastlehomes.com/",
+      "address": "Avenue G, Austin, TX 78751",
+      "rating": 4.7,
+      "reviews": 26,
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Newcastle%20Homes&query_place_id=ChIJq6oGO8e1RIYRyIxzpdpT77g",
+      "category": "Home builder",
+      "photo": "https://gz0.googleusercontent.com/grass-cs/AABkmLdlaQEz0ExRFHeyW7QyU1PZWJ8r7cL_1HxaLPwg7-FZSnHBwDYwJJIGpEBj1Uy_0PWg-EqW-2tq9RYBcvReJGd7RyMmavIgMI8qPjJPgRdmqomArmTSRkMcFneQffLcUc1kEYbR=w411-h273-k-no",
+      "review": "The Newcastle Homes team was fantastic to work with. They made a home addition go so smoothly and it came out beautiful. I'm so impressed by the talents and care the Newcastle team took.",
+      "reviewer": "Megan Lawlor"
+    },
+    {
+      "name": "Mosier Luxury Homes LLC",
+      "phone": "(512) 563-8937",
+      "website": "http://mosierluxuryhomes.com/",
+      "address": "1613 W 6th St Ste A, Austin, TX 78703",
+      "rating": 5,
+      "reviews": 13,
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Mosier%20Luxury%20Homes%20LLC&query_place_id=ChIJiah-UWvLRIYROavaxh_Cyx8",
+      "category": "Home builder",
+      "photo": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=Hl1sk-vhI2r1zuelrRPRHA&cb_client=search.unparseable.grass&w=411&h=710&yaw=201.83894&pitch=0&thumbfov=100",
+      "review": "Amy & Jackie were an absolute pleasure to work with from start to finish. We moved into a lake property my parents built 25 years ago, and since they still live in town and visit often, it was really important to us to…",
+      "reviewer": "Kimberley Ezell"
+    },
+    {
+      "name": "Riverside Homes LLC",
+      "phone": "(512) 473-9930",
+      "website": "http://riversidehomesaustin.com/",
+      "address": "3801 Berkman Dr Ste A, Austin, TX 78723",
+      "rating": 5,
+      "reviews": 5,
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Riverside%20Homes%20LLC&query_place_id=ChIJHfnUJRW1RIYRMDmnvkFbg_A",
+      "category": "Custom home builder",
+      "photo": "https://gz0.googleusercontent.com/grass-cs/AABkmLe536Akpm68XsdWySP0-FgOx30ADHqRYjWI-Sn05Ol8VOU6HM92d4hZwwxOCNXDibW9sfkkOn9f2F2AAaJ7XV5KtFXGGRWBCHFkEsAI6otI6Muq0Aorp_iwCJQVd2Gp4ZczHvJ-=w411-h274-k-no",
+      "review": "Incredible experience working with them. Scott, Ellenise, Mo, and their entire team are complete professionals and their work is top-notch. Looking for opportunities to work with them again.",
+      "reviewer": "Devin Pigera"
     }
   ]
 }

@@ -8,6 +8,27 @@ import { useEffect, useMemo, useState } from "react";
 
 const Crew = dynamic(() => import("@/components/Crew").then((mod) => mod.Crew), { ssr: false });
 
+// Leads the results with the answer: what the person asked for, and how the spot scored.
+function verdict(run: RunRecord) {
+  const c = run.constraints;
+  const what = c.adu
+    ? "A backyard ADU"
+    : c.fourplex
+      ? "A fourplex"
+      : c.kind === "commercial"
+        ? "A commercial building"
+        : c.units
+          ? `${c.units} ${c.units === 1 ? "home" : "homes"}`
+          : "Your project";
+  const fit =
+    run.spot.band === "strong"
+      ? "looks like a strong fit here"
+      : run.spot.band === "possible"
+        ? "looks possible here, with a few checks first"
+        : "faces real hurdles here";
+  return `${what} ${fit}.`;
+}
+
 const BAND = { strong: "Strong match", possible: "Possible", weak: "Weak match" };
 
 export function RunDesk({ id }: { id: string }) {
@@ -174,6 +195,7 @@ export function RunDesk({ id }: { id: string }) {
         <div className="lede">
           <p className="kicker">Research · {(run.durationMs / 1000).toFixed(1)}s on the city layers</p>
           <h1>{place}</h1>
+          <p className="verdict">{verdict(run)}</p>
           <p className="muted">
             {run.spot.name} · {run.field.zoning ?? "Zoning missing"} · {BAND[run.spot.band]}
           </p>

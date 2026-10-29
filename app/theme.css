@@ -634,3 +634,12 @@ textarea { min-height: 84px; }
   .crew-card .crew-hop,
   .crew-typing, .crew-typing i, .crew-ticks, .crew-sparks i, .crew-sweat { animation: none !important; }
 }
+
+/* Results lead with the verdict */
+.lede .verdict {
+  margin: 4px 0 6px;
+  font-size: clamp(20px, 2vw, 26px);
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--graphite);
+}

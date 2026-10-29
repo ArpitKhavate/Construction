@@ -102,8 +102,16 @@ function floodSentence(field: FieldReport) {
 
 function permitLine(permit: PermitHit) {
   const bits = [permit.year, permit.type, permit.status, permit.address].filter(Boolean);
-  if (permit.units) bits.push(`${permit.units} units`);
+  if (permit.units) bits.push(`${permit.units} ${permit.units === 1 ? "unit" : "units"}`);
   return bits.join(" · ");
+}
+
+// "4 active building permits" style count for prose; the full rows stay on the Permits card.
+function permitSummary(permits: PermitHit[]) {
+  const count = permits.length;
+  const statuses = new Set(permits.map((permit) => permit.status?.toLowerCase()).filter(Boolean));
+  const status = statuses.size === 1 ? `${[...statuses][0]} ` : "";
+  return `${count} ${status}building ${count === 1 ? "permit" : "permits"}`;
 }
 
 export function buildChecklist(constraints: Constraints, field: FieldReport): ChecklistItem[] {
@@ -243,10 +251,7 @@ export function buildChecklist(constraints: Constraints, field: FieldReport): Ch
   items.push({
     title: "Look up old permits on this block",
     detail: field.permits.length
-      ? `Nearby permit points include ${field.permits
-          .slice(0, 3)
-          .map((permit) => permitLine(permit))
-          .join("; ")}. Search this address in Austin Build + Connect. An expired permit has to be acknowledged with the new application.`
+      ? `${permitSummary(field.permits)} within about 220 meters (listed under Permits). Search this address in Austin Build + Connect. An expired permit has to be acknowledged with the new application.`
       : "No building-permit points came back within about 220 meters. Search the address in Austin Build + Connect anyway, and file the expired-permit acknowledgment if one is still open.",
     why: "An expired permit on the property can stall a new application.",
     href: ABC,

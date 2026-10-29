@@ -460,3 +460,28 @@
     transition: none;
   }
 }
+
+/* Entry to the 3D site builder (Arpit's /runs/[id]/build page). */
+.run .nb-build-cta {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 14px;
+  padding: 10px 16px;
+  background: #fff;
+  color: #191c22;
+  border: 3px solid #191c22;
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 #191c22;
+  font-family: var(--serif);
+  font-variation-settings: "wdth" 72;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
+  position: relative;
+  z-index: 2;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.run .nb-build-cta:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 #191c22; }
+.run .nb-build-cta:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 #191c22; }

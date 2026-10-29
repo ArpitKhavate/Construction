@@ -269,6 +269,9 @@ export function RunDesk({ id }: { id: string }) {
             <h1>{verdict(run)}</h1>
             <p className="nb-place">{place}</p>
             <p className="nb-prompt">“{run.prompt}”</p>
+            <Link className="nb-build-cta" href={`/runs/${id}/build`}>
+              See it built in 3D →
+            </Link>
             <img className="nb-peek nb-peek-verdict" src={`/crew/${peek}.png`} alt="" aria-hidden="true" />
           </div>
           <Tile icon="zoning" value={run.field.zoning ?? "—"} label="Zoning" />

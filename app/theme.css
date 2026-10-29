@@ -660,8 +660,6 @@ textarea { min-height: 84px; }
   line-height: 1.25;
   color: var(--graphite);
 }
-<<<<<<< Updated upstream
-=======
 
 /* ---------- Results polish (below the crew row) ---------- */
 
@@ -1013,4 +1011,3 @@ textarea { min-height: 84px; }
   .sb-panel { top: auto; left: 12px; right: 12px; width: auto; max-height: 46vh; }
   .sb-dock { transform: translateX(-50%); bottom: calc(46vh + 26px); flex-wrap: wrap; justify-content: center; }
 }
->>>>>>> Stashed changes

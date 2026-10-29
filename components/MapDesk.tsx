@@ -154,16 +154,12 @@ export default function MapDesk({
       if (city.live) button.style.zIndex = "10";
     }
 
-<<<<<<< Updated upstream
     // "load" waits for every tile in view, which can lag during the landing flight; the style is enough to draw on.
     map.once("style.load", () => setReady(true));
-    map.on("load", () => setReady(true));
-=======
     map.on("load", () => {
       setReady(true);
       map.once("idle", () => onSettledRef.current?.());
     });
->>>>>>> Stashed changes
     return () => {
       spotMarkers.current.forEach((marker) => marker.remove());
       map.remove();

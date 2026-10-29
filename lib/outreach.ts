@@ -15,6 +15,21 @@ export function normalizeEmail(input: string): string | null {
   return value;
 }
 
+// Sending is limited to recipients the operator lists in .env.local (OUTREACH_ALLOW_TO, DEMO_EMAIL,
+// DEMO_PHONE). The on-screen approval box is only a flag from the browser, so without this a deployed
+// copy could be scripted into sending spam or placing calls to anyone.
+function allowedRecipient(kind: "email" | "phone", to: string) {
+  const own = kind === "email" ? process.env.DEMO_EMAIL : process.env.DEMO_PHONE;
+  const listed = [process.env.OUTREACH_ALLOW_TO, own]
+    .filter(Boolean)
+    .join(",")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean)
+    .map((value) => (kind === "email" ? value.toLowerCase() : normalizePhone(value)));
+  return listed.includes(kind === "email" ? to.toLowerCase() : to);
+}
+
 function xml(value: string) {
   return value
     .replace(/&/g, "&amp;")
@@ -24,6 +39,9 @@ function xml(value: string) {
 }
 
 export async function sendEmail(input: { to: string; subject: string; body: string }) {
+  if (!allowedRecipient("email", input.to)) {
+    throw new Error("This demo only emails addresses listed in OUTREACH_ALLOW_TO or DEMO_EMAIL in .env.local.");
+  }
   const from = process.env.EMAIL_FROM;
   if (!from) throw new Error("Set EMAIL_FROM in .env.local before sending.");
 
@@ -66,6 +84,9 @@ export async function sendEmail(input: { to: string; subject: string; body: stri
 }
 
 export async function placeCall(input: { to: string; script: string }) {
+  if (!allowedRecipient("phone", input.to)) {
+    throw new Error("This demo only calls numbers listed in OUTREACH_ALLOW_TO or DEMO_PHONE in .env.local.");
+  }
   const sid = process.env.TWILIO_ACCOUNT_SID;
   const token = process.env.TWILIO_AUTH_TOKEN;
   const from = process.env.TWILIO_FROM;

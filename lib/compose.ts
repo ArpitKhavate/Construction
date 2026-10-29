@@ -2,7 +2,8 @@ import { applyFeedback, constraintsChanged, parseConstraints } from "@/lib/const
 import { readAddress } from "@/lib/address";
 import { loadAnchorFacts, readField } from "@/lib/gis";
 import { annotateSpot, rankSpots } from "@/lib/rank";
-import { buildCall, buildChecklist, buildEmail, buildSteps } from "@/lib/report";
+import { runAgents } from "@/lib/agents";
+import { buildCall, buildChecklist, buildEmail } from "@/lib/report";
 import type { Constraints, RunRecord, Spot } from "@/lib/types";
 
 export async function buildRun(input: {
@@ -17,13 +18,7 @@ export async function buildRun(input: {
   const started = Date.now();
   const field = await readField(input.spot);
   const elapsed = Date.now() - started;
-  const timings = {
-    codes: elapsed,
-    hazards: elapsed,
-    permits: elapsed,
-    environmental: elapsed,
-    development: elapsed,
-  };
+  const steps = await runAgents(input.spot, field, input.constraints, { prompt: input.prompt, fallbackMs: elapsed });
   const now = new Date().toISOString();
   return {
     id: input.id ?? crypto.randomUUID(),
@@ -31,7 +26,7 @@ export async function buildRun(input: {
     constraints: input.constraints,
     spot: input.spot,
     field,
-    steps: buildSteps(input.spot, field, input.constraints, timings),
+    steps,
     checklist: buildChecklist(input.constraints, field),
     email: buildEmail(input.spot, field, input.constraints),
     call: buildCall(input.spot, field, input.constraints),
